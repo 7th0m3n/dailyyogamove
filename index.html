@@ -224,6 +224,7 @@
       </a>
       <nav class="nav-actions" aria-label="Primary">
         <a class="btn ghost nav-link" href="#/" role="button" aria-label="Home">Home</a>
+        <a class="btn ghost nav-link" href="#/about" id="navAbout" role="button" aria-label="About">About</a>
         <a class="btn nav-link" href="#/teacher" role="button" aria-label="Teacher Portal">Teacher</a>
       </nav>
     </div>
@@ -502,6 +503,8 @@
         case '#':
         case '':
           return renderLanding();
+        case '#/about':
+          return renderAbout();
         case '#/postures':
           return renderPostures();
         case '#/breathpacer':
@@ -1524,6 +1527,23 @@
       }
       document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', (e) => activate(e.currentTarget.getAttribute('data-tab'))));
       activate(activeTab);
+      AppRoot.focus();
+    }
+
+    function renderAbout() {
+      AppRoot.innerHTML = `
+        <section class="grid" aria-label="About DailyYogaMove">
+          <div class="card">
+            <h3>About</h3>
+            <div class="space"></div>
+            <div class="intro-block" style="margin-top:0;">
+              <div>DailyYogaMove is a white-label platform connecting yoga teachers and students for seamless remote practice.</div>
+              <div>It serves as a living library of postures, mantras, and breathwork — a digital ashram for modern seekers.</div>
+              <div>Built to inspire teachers to refine, record, and share their evolving yoga journey.</div>
+            </div>
+          </div>
+        </section>
+      `;
       AppRoot.focus();
     }
 
