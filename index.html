@@ -234,6 +234,9 @@
     <div class="small">MVP prototype. Data saved locally. <!-- TODO: replace localStorage with Supabase (auth, RLS, tables) --></div>
   </footer>
 
+  <!-- Toast -->
+  <div id="toast" aria-live="polite" style="position:fixed; left:50%; bottom:18px; transform:translate(-50%,8px); background:#0f1835; border:1px solid #2b3a72; color:#d6e6ff; padding:8px 12px; border-radius:10px; box-shadow:0 8px 20px rgba(0,0,0,0.35); opacity:0; transition:opacity 180ms ease, transform 180ms ease; z-index:50;"></div>
+
   <script>
     // Store and App State Utilities
     const STORAGE_KEY = 'dym:store:v1';
@@ -256,6 +259,34 @@
           setTimeout(() => { delete host.dataset.copied; }, 1200);
         }
       });
+    }
+
+    // Text utils for Mantras
+    function normalize(s){return (s||"").toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-z0-9\s]/g,'').trim().replace(/\s+/g,' ');} // collapse spaces
+    function slug(s){return normalize(s).replace(/\s+/g,'-');}
+    function dedupeMantras(list){
+      const seen=new Set(), out=[]; let removed = 0;
+      for(const m0 of (list||[])){
+        const m = upgradeMantraShape ? upgradeMantraShape(m0) : m0;
+        const k=[normalize(m.title),normalize(m.devanagari),normalize(m.transliteration)].join('|');
+        if(seen.has(k)){ removed++; continue; }
+        seen.add(k); out.push(m);
+      }
+      out._removed = removed; // attach count for callers who care
+      return out;
+    }
+    function makeUniqueId(baseId, teacher){
+      let id = baseId; let i = 1;
+      const ids = new Set((teacher?.mantras||[]).map(x => (upgradeMantraShape(x).id||'').toLowerCase()));
+      while(ids.has(id.toLowerCase())) { id = baseId + '-' + (i++); }
+      return id;
+    }
+    function showToast(message) {
+      const el = document.getElementById('toast'); if (!el) return;
+      el.textContent = message; el.style.opacity = '1'; el.style.transform = 'translateY(0)';
+      clearTimeout(el._t); el._t = setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(8px)'; }, 2200);
     }
 
     const Store = {
@@ -336,7 +367,7 @@
       const demoSeqId = generateId('seq');
       const demoSeq2Id = generateId('seq');
       const demoProgramId = generateId('prog');
-      App.state.teachers[demoId] = {
+      let demoTeacher = {
         id: demoId,
         email: 'demo@dym.test',
         name: 'DEMO Studio',
@@ -398,22 +429,37 @@
         ],
         assignments: [],
         students: [],
-        mantras: [
-          { id: generateId('m'), title: 'Om', text: 'ॐ', meaning: 'Primordial sound', usage: 'Centering', recitations: 3, published: true },
-          { id: generateId('m'), title: 'So Hum', text: 'सो ऽहम्', meaning: 'I am That', usage: 'Breath awareness', recitations: 5, published: true }
-        ],
+        mantras: GLOBAL_MANTRAS.map(m => ({ ...m })),
         analytics: {
           portalVisits: [], // {studentCode, at}
           completions: [] // {studentCode, sequenceId, at}
         }
       };
+      // De-duplicate global seed (should be unique already)
+      const cleanedGlobal = dedupeMantras(GLOBAL_MANTRAS);
+      // De-duplicate teacher overlay seed if any
+      const cleanedOverlay = dedupeMantras(demoTeacher.mantras);
+      const removed = (cleanedGlobal._removed||0) + (cleanedOverlay._removed||0);
+      demoTeacher.mantras = cleanedOverlay;
+      App.state.teachers[demoId] = demoTeacher;
       App.state.demoTeacherId = demoId;
+      if (removed > 0) { App._dupesRemoved = (App._dupesRemoved||0) + removed; }
     }
 
     function init() {
       const saved = Store.load();
       if (saved) App.state = saved; else Store.save(App.state);
       ensureDemoSeed();
+      // Clean duplicates in each teacher's mantras and write back if changed
+      let totalRemoved = 0;
+      Object.values(App.state.teachers).forEach(t => {
+        if (!Array.isArray(t.mantras)) return;
+        const cleaned = dedupeMantras(t.mantras);
+        if (cleaned.length !== t.mantras.length) {
+          t.mantras = cleaned; totalRemoved += (cleaned._removed||0) + (t.mantras.length - cleaned.length);
+        }
+      });
+      if (totalRemoved > 0) { App._dupesRemoved = (App._dupesRemoved||0) + totalRemoved; persist(); }
       // Apply teacher theme color where relevant
       const t = App.teacher || App.activeTeacher || App.state.teachers[App.state.demoTeacherId];
       App.setTeacherColor(t?.color);
@@ -712,6 +758,8 @@
               <input id="m-search" class="input" placeholder="Search mantras or tags" />
               <button id="m-export" class="btn sm" aria-label="Export Mantras JSON">Export JSON</button>
               <button id="m-import" class="btn sm ghost" aria-label="Import Mantras JSON">Import JSON</button>
+              <span class="spacer"></span>
+              <button id="m-generate" class="btn sm" aria-label="Open Mantra Generator">Generate</button>
             </div>
             <div class="space"></div>
             <details class="drawer">
@@ -738,6 +786,60 @@
             <div id="m-tags" class="row" role="group" aria-label="Tag filters"></div>
             <div class="space"></div>
             <div id="mantra-list" class="list"></div>
+          </div>
+          <div id="mgen" class="modal" aria-hidden="true" aria-label="Mantra Generator" role="dialog">
+            <div class="modal-card" role="document">
+              <div class="row" style="justify-content:space-between;">
+                <strong>Mantra Generator</strong>
+                <button class="btn sm ghost" id="mgen-close" aria-label="Close">Close</button>
+              </div>
+              <div class="space"></div>
+              <div class="grid">
+                <div>
+                  <div class="small">Intent</div>
+                  <div id="mgen-intents" class="row"></div>
+                </div>
+                <div>
+                  <label>Bīja Seed</label>
+                  <select id="mgen-seed" class="input">
+                    <option>Om</option>
+                    <option>So’ham</option>
+                    <option>Śāntiḥ</option>
+                    <option>Hrīṃ</option>
+                    <option>Aiṃ</option>
+                    <option>Klīṃ</option>
+                    <option>Gaṃ</option>
+                    <option>Dum</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Pattern</label>
+                  <select id="mgen-pattern" class="input">
+                    <option>Breath-sync</option>
+                    <option>Invocation</option>
+                    <option>Affirmation</option>
+                  </select>
+                </div>
+                <div class="row">
+                  <input id="mgen-recs" class="input" type="number" min="1" value="108" aria-label="Recitations" style="max-width:140px;" />
+                  <label class="row" style="gap:6px;">
+                    <input id="mgen-dev" type="checkbox" checked /> Include Devanāgarī
+                  </label>
+                  <label class="row" style="gap:6px;">
+                    <input id="mgen-trans" type="checkbox" checked /> Include Transliteration
+                  </label>
+                </div>
+              </div>
+              <div class="space"></div>
+              <div id="mgen-preview" class="drawer"></div>
+              <div class="row" style="justify-content:flex-end; gap:8px; margin-top:8px;">
+                <button id="mgen-generate" class="btn sm" aria-label="Generate">Generate</button>
+                <button id="mgen-save-draft" class="btn sm ghost" aria-label="Save Draft">Save as Draft</button>
+                <button id="mgen-publish" class="btn sm success" aria-label="Publish">Publish</button>
+                <button id="mgen-copy" class="btn sm" aria-label="Copy JSON">Copy</button>
+                <button id="mgen-export" class="btn sm" aria-label="Export JSON">Export JSON</button>
+              </div>
+            </div>
           </div>
         </section>
       `;
@@ -1197,9 +1299,10 @@
         document.getElementById('m-import').onclick = () => {
           const json = prompt('Paste mantras JSON');
           if (!json) return;
-          try { const arr = JSON.parse(json); if (Array.isArray(arr)) { t.mantras = arr.map(upgradeMantraShape); persist(); drawMantras(); } }
+          try { const arr = JSON.parse(json); if (Array.isArray(arr)) { t.mantras = dedupeMantras(arr.map(upgradeMantraShape)); persist(); drawMantras(); } }
           catch(e){ alert('Invalid JSON'); }
         };
+        if (App._dupesRemoved && !App._dupesToastShown) { showToast(App._dupesRemoved + ' duplicates removed.'); App._dupesToastShown = true; }
       }
 
       function fillMantraForm(m) {
@@ -1223,6 +1326,14 @@
         if (draft) draft.addEventListener('click', () => saveMantra('draft'));
         if (reset) reset.addEventListener('click', () => fillMantraForm({ id: '', title: '', devanagari: '', transliteration: '', meaning: '', usage: '', recs: '', tags: [] }));
         if (search) search.addEventListener('input', () => drawMantras());
+        // Generator wiring
+        const genBtn = document.getElementById('m-generate');
+        const modal = document.getElementById('mgen');
+        const close = document.getElementById('mgen-close');
+        if (genBtn) genBtn.addEventListener('click', () => { openGen(); });
+        if (close) close.addEventListener('click', () => closeGen());
+        document.addEventListener('keydown', (e) => { if (modal.hasAttribute('open') && e.key === 'Escape') closeGen(); });
+        setupGenUI();
       })();
 
       function saveMantra(status) {
@@ -1252,6 +1363,89 @@
         persist();
       }
       drawMantras();
+
+      // -------- Mantra Generator --------
+      function setupGenUI(){
+        const intents = ['focus','calm','protection','healing','learning','compassion','clarity','stillness','energy'];
+        const wrap = document.getElementById('mgen-intents'); if (!wrap) return;
+        wrap.innerHTML = intents.map(i => `<button class="tag" data-intent="${i}">${i}</button>`).join('');
+        wrap.querySelectorAll('.tag').forEach(b => b.addEventListener('click', (e) => { e.currentTarget.classList.toggle('active'); updatePreview(); }));
+        ['mgen-seed','mgen-pattern','mgen-recs','mgen-dev','mgen-trans'].forEach(id => document.getElementById(id).addEventListener('input', updatePreview));
+        document.getElementById('mgen-generate').addEventListener('click', updatePreview);
+        document.getElementById('mgen-save-draft').addEventListener('click', () => saveFromPreview('draft'));
+        document.getElementById('mgen-publish').addEventListener('click', () => saveFromPreview('published'));
+        document.getElementById('mgen-copy').addEventListener('click', () => copyToClipboard(JSON.stringify(currentPreview(), null, 2), document.getElementById('mgen-copy')));
+        document.getElementById('mgen-export').addEventListener('click', () => {
+          const data = JSON.stringify(currentPreview(), null, 2);
+          const blob = new Blob([data], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a'); a.href = url; a.download = 'mantra.json'; a.click(); URL.revokeObjectURL(url);
+        });
+        updatePreview();
+      }
+      function openGen(){ const m = document.getElementById('mgen'); m.setAttribute('open',''); m.setAttribute('aria-hidden','false'); }
+      function closeGen(){ const m = document.getElementById('mgen'); m.removeAttribute('open'); m.setAttribute('aria-hidden','true'); }
+      function selectedIntents(){ return Array.from(document.querySelectorAll('#mgen-intents .tag.active')).map(b => b.getAttribute('data-intent')); }
+      function currentPreview(){
+        const seed = document.getElementById('mgen-seed').value;
+        const pattern = document.getElementById('mgen-pattern').value;
+        const recs = parseInt(document.getElementById('mgen-recs').value || '108', 10);
+        const incDev = document.getElementById('mgen-dev').checked;
+        const incTrans = document.getElementById('mgen-trans').checked;
+        const intents = selectedIntents();
+        return generateMantra({ seed, pattern, recs, incDev, incTrans, intents });
+      }
+      function updatePreview(){
+        const m = currentPreview();
+        const p = document.getElementById('mgen-preview');
+        p.innerHTML = `
+          <div class="row" style="justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div class="devanagari">${m.devanagari||''}</div>
+              <div class="translit">${m.transliteration||''}</div>
+              <strong>${m.title}</strong>
+              <div class="small">${m.meaning||''}</div>
+              <div class="muted">${m.usage||''}</div>
+              <div class="row" style="margin-top:6px;">${(m.tags||[]).map(tg => `<span class='chip'>${tg}</span>`).join(' ')}</div>
+              <div class="small" style="margin-top:6px;">Recitations: ${m.recs||''}</div>
+            </div>
+          </div>
+        `;
+      }
+      function saveFromPreview(status){
+        const m = currentPreview();
+        const baseId = slug(m.title || 'mantra');
+        const id = makeUniqueId(baseId, t);
+        const entry = { ...m, id, status };
+        t.mantras = t.mantras || [];
+        t.mantras.unshift(entry);
+        persist(); drawMantras(); showToast(status==='published' ? 'Mantra published' : 'Mantra saved');
+      }
+      function generateMantra({ seed, pattern, recs, incDev, incTrans, intents }){
+        const tags = intents || [];
+        let title = seed;
+        let devanagari = '';
+        let transliteration = '';
+        let meaning = '';
+        let usage = '';
+        if (pattern === 'Breath-sync') {
+          if (seed === 'So’ham') { devanagari = 'सोऽहम्'; transliteration = "So’ham"; title = 'So’ham'; meaning = 'I am That.'; usage = 'Sync with breath: So (inhale) — Ham (exhale).'; }
+          else { title = `${seed} Prāṇayoga`; usage = 'Sync with breath.'; }
+        } else if (pattern === 'Invocation') {
+          const intent = (intents[0]||'').toLowerCase();
+          const deityMap = { protection:'Durgā', beginnings:'Gaṇeśa', learning:'Sarasvatī', clarity:'Gāyatrī' };
+          const deity = deityMap[intent] || 'Gaṇeśa';
+          title = `Om ${deity} namaḥ`;
+          transliteration = `Om ${deity} namaḥ`;
+          usage = 'Invocation.';
+        } else if (pattern === 'Affirmation') {
+          const map = { focus:'Steady mind, clear sight.', calm:'I rest in ease.', protection:'I am protected.', healing:'I heal and renew.', learning:'I learn and express.', compassion:'I act with kindness.', clarity:'I see clearly.', stillness:'I am stillness.', energy:'I am vibrant energy.' };
+          title = map[(intents[0]||'focus')] || 'I am present.';
+          meaning = title; usage = 'Affirmation.';
+        }
+        const m = { id:'', title, devanagari: incDev ? devanagari : '', transliteration: incTrans ? transliteration : '', meaning, usage, recs, tags, status:'draft' };
+        return m;
+      }
 
       AppRoot.focus();
     }
