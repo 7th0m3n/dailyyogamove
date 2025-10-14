@@ -18,6 +18,7 @@
       --card-2: #192448;
       --text: #ecf1ff;
       --muted: #b9c7e9;
+      --text-muted: var(--muted);
       --accent-teal: #2dd4bf; /* teal */
       --accent-amber: #f59e0b; /* amber */
       --ring: rgba(45,212,191,0.45);
@@ -115,6 +116,8 @@
     .hero { margin: 28px 0 24px; text-align: center; }
     .hero h1 { font-family: "Playfair Display", Georgia, serif; font-size: clamp(28px, 6vw, 48px); letter-spacing: 0.2px; margin: 0 0 10px; }
     .hero p { color: var(--muted); margin: 0 0 16px; }
+    .intro-block { max-width: 700px; margin: 6px auto 14px; text-align: center; color: var(--text-muted); font-size: 1.15rem; opacity: 0; animation: introFade 400ms ease forwards; }
+    @media (max-width: 640px) { .intro-block { font-size: 1rem; } }
 
     .grid { display: grid; gap: var(--gap); }
     @media (min-width: 740px) { .grid.cols-2 { grid-template-columns: 1fr 1fr; } }
@@ -209,6 +212,7 @@
     .modal[open] { display: flex; }
     .modal-card { width: min(720px, 92vw); background: linear-gradient(180deg, var(--card), var(--card-2)); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 16px; box-shadow: var(--shadow-1); animation: fadeIn 200ms ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes introFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
@@ -545,6 +549,11 @@
         <section class="hero" aria-labelledby="hero-title">
           <h1 id="hero-title">Practice. Sequence. Teach.</h1>
           <p>Mobile-first yoga teaching and student portal with breath pacing.</p>
+          <div class="intro-block">
+            <div>DailyYogaMove is a white-label platform connecting yoga teachers and students for seamless remote practice.</div>
+            <div>It serves as a living library of postures, mantras, and breathwork — a digital ashram for modern seekers.</div>
+            <div>Built to inspire teachers to refine, record, and share their evolving yoga journey.</div>
+          </div>
           <div class="row" role="group" aria-label="Primary Calls to Action" style="justify-content:center; gap:10px;">
             <a class="btn" href="#/join" role="button">Enter Teacher Code</a>
             <a class="btn secondary" href="#/teacher" role="button">I'm a Teacher</a>
