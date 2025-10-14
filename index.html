@@ -193,6 +193,22 @@
     .drawer { background: linear-gradient(180deg, var(--card), var(--card-2)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 14px; box-shadow: var(--shadow-1); }
     .tag { display: inline-block; padding: 2px 8px; font-size: 12px; border-radius: 999px; border: 1px solid #2b3a72; color: #cfe3ff; margin: 0 6px 6px 0; cursor: pointer; }
     .tag.active { background: rgba(45,212,191,0.15); border-color: rgba(45,212,191,0.35); }
+
+    /* Postures */
+    .posture-filters { position: sticky; top: 64px; z-index: 5; background: linear-gradient(180deg, rgba(15,25,51,0.92), rgba(15,25,51,0.6)); padding: 8px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(8px); }
+    .posture-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+    .posture-card { background: linear-gradient(180deg, #0e1730, #13214a); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; overflow: hidden; transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition); }
+    .posture-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); border-color: rgba(110,168,254,0.35); }
+    .posture-media { height: 140px; background: radial-gradient(circle at 35% 35%, rgba(110,168,254,0.25), transparent 60%), linear-gradient(160deg, #0c1733, #15244d); display: grid; place-items: center; color: #9fc9ff; font-size: 32px; }
+    .posture-body { padding: 12px; display: grid; gap: 6px; }
+    .level { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+    .level-beginner { background: rgba(34,197,94,0.18); color: #bbf7d0; border: 1px solid rgba(34,197,94,0.35); }
+    .level-intermediate { background: rgba(245,158,11,0.18); color: #fde68a; border: 1px solid rgba(245,158,11,0.35); }
+    .level-advanced { background: rgba(239,68,68,0.18); color: #fecaca; border: 1px solid rgba(239,68,68,0.35); }
+    .modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); }
+    .modal[open] { display: flex; }
+    .modal-card { width: min(720px, 92vw); background: linear-gradient(180deg, var(--card), var(--card-2)); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 16px; box-shadow: var(--shadow-1); animation: fadeIn 200ms ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
@@ -203,7 +219,10 @@
         <span>DailyYogaMove</span>
       </a>
       <nav class="nav-actions" aria-label="Primary">
-        <a class="btn ghost nav-link" href="#/join" role="button" aria-label="Join">Join</a>
+        <a class="btn ghost nav-link" href="#/" role="button" aria-label="Home">Home</a>
+        <a class="btn ghost nav-link" href="#/postures" role="button" aria-label="Postures">Postures</a>
+        <a class="btn ghost nav-link" href="#/portal?tab=Mantras" role="button" aria-label="Mantras">Mantras</a>
+        <a class="btn ghost nav-link" href="#/portal?tab=BreathPacer" role="button" aria-label="Breath Pacer">BreathPacer</a>
         <a class="btn nav-link" href="#/teacher" role="button" aria-label="Teacher Portal">Teacher</a>
       </nav>
     </div>
@@ -422,7 +441,9 @@
       // Set active nav link
       document.querySelectorAll('.nav-link').forEach(a => {
         const href = a.getAttribute('href');
-        const isActive = (href === location.hash) || (href === '#/teacher' && location.hash.startsWith('#/teacher')) || (href === '#/join' && location.hash.startsWith('#/join'));
+        const target = href.split('?')[0];
+        const current = (location.hash || '#/').split('?')[0];
+        const isActive = target === current || (target === '#/' && (current === '#/' || current === '#' || current === ''));
         a.classList.toggle('active', !!isActive);
       });
       switch (path) {
@@ -430,6 +451,8 @@
         case '#':
         case '':
           return renderLanding();
+        case '#/postures':
+          return renderPostures();
         case '#/join':
           return renderJoin(query);
         case '#/teacher':
@@ -1547,6 +1570,124 @@
         if (p === 'box') renderPreset('Box', 4, 4, 4, 4);
         if (p === '6-2-6') renderPreset('6-2-6', 6, 2, 6, 0);
       }));
+    }
+
+    // Postures data (can be replaced with external JSON later)
+    const POSES = [
+      { english:'Mountain Pose', sanskrit:'ताड़ासन', transliteration:'Tāḍāsana', level:'Beginner', category:'standing', tags:['foundation'], image:'', notes:'Feet hip-width, thighs engage, tailbone neutral.' },
+      { english:'Downward-Facing Dog', sanskrit:'अधो मुख श्वानासन', transliteration:'Adho Mukha Śvānāsana', level:'Beginner', category:'inversion', tags:['hamstrings','shoulders'], image:'', notes:'Hands shoulder-width, sit bones lift, heels descend.' },
+      { english:'Cobra', sanskrit:'भुजङ्गासन', transliteration:'Bhujangāsana', level:'Beginner', category:'backbend', tags:['spine'], image:'', notes:'Press tops of feet, lift chest, shoulders away from ears.' },
+      { english:'Warrior II', sanskrit:'वीरभद्रासन II', transliteration:'Vīrabhadrāsana II', level:'Intermediate', category:'standing', tags:['legs','focus'], image:'', notes:'Front knee tracks toes, back leg firm, gaze over front hand.' },
+      { english:'Triangle', sanskrit:'त्रिकोणासन', transliteration:'Trikoṇāsana', level:'Intermediate', category:'standing', tags:['side-body','hamstrings'], image:'', notes:'Hinge at hip, spin ribs open, lengthen both sides.' },
+      { english:'Bridge', sanskrit:'सेतु बन्धासन', transliteration:'Setu Bandhāsana', level:'Beginner', category:'backbend', tags:['glutes','chest'], image:'', notes:'Root through feet, lift hips, interlace hands under back.' },
+      { english:'Seated Forward Fold', sanskrit:'पश्चिमोत्तानासन', transliteration:'Paścimottānāsana', level:'Intermediate', category:'forward bend', tags:['hamstrings','calm'], image:'', notes:'Lengthen spine, hinge at hips, soften knees if needed.' },
+      { english:'Revolved Chair', sanskrit:'परिवृत्त उत्कटासन', transliteration:'Parivrtta Utkatāsana', level:'Intermediate', category:'twist', tags:['detox','legs'], image:'', notes:'Knees track, lengthen, then twist from thoracic spine.' },
+      { english:'Crow Pose', sanskrit:'बकासन', transliteration:'Bakāsana', level:'Advanced', category:'arm balance', tags:['core','balance'], image:'', notes:'Gaze forward, hug knees to arms, shift weight into hands.' },
+      { english:'Pigeon', sanskrit:'एक पाद राजकपोतासन (prep)', transliteration:'Eka Pāda Rāja Kapotāsana (prep)', level:'Intermediate', category:'hip opener', tags:['hips','release'], image:'', notes:'Square hips, support with props, keep spine long.' },
+      { english:'Headstand (prep)', sanskrit:'शीर्षासन (prep)', transliteration:'Śīrṣāsana (prep)', level:'Advanced', category:'inversion', tags:['core','inversion'], image:'', notes:'Use wall, interlace fingers, keep shoulders strong.' },
+      { english:'Savasana', sanskrit:'शवासन', transliteration:'Śavāsana', level:'Beginner', category:'closing', tags:['rest','integration'], image:'', notes:'Support under knees if low back sensitive, eyes soft.' }
+    ];
+
+    function renderPostures() {
+      AppRoot.innerHTML = `
+        <section class="grid" aria-label="Postures">
+          <div class="posture-filters" role="search">
+            <div class="row">
+              <input id="p-search" class="input" placeholder="Search English or Sanskrit" aria-label="Search postures" />
+              <select id="p-cat" class="input" aria-label="Filter by category">
+                <option value="">All categories</option>
+                <option>standing</option>
+                <option>seated</option>
+                <option>backbend</option>
+                <option>twist</option>
+                <option>inversion</option>
+                <option>arm balance</option>
+                <option>hip opener</option>
+                <option>forward bend</option>
+                <option>closing</option>
+              </select>
+            </div>
+          </div>
+          <div id="p-grid" class="posture-grid" role="list"></div>
+        </section>
+        <div id="p-modal" class="modal" aria-hidden="true" aria-label="Posture details" role="dialog">
+          <div class="modal-card" role="document">
+            <div class="row" style="justify-content:space-between;">
+              <strong id="pm-title"></strong>
+              <button class="btn sm ghost" id="pm-close" aria-label="Close">Close</button>
+            </div>
+            <div id="pm-body"></div>
+          </div>
+        </div>
+      `;
+
+      const search = document.getElementById('p-search');
+      const cat = document.getElementById('p-cat');
+      const grid = document.getElementById('p-grid');
+      const modal = document.getElementById('p-modal');
+      const pmTitle = document.getElementById('pm-title');
+      const pmBody = document.getElementById('pm-body');
+      document.getElementById('pm-close').addEventListener('click', closeModal);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+      function levelClass(level) {
+        const l = (level||'').toLowerCase();
+        if (l.startsWith('begin')) return 'level level-beginner';
+        if (l.startsWith('inter')) return 'level level-intermediate';
+        return 'level level-advanced';
+      }
+      function draw() {
+        const q = (search.value || '').toLowerCase();
+        const c = (cat.value || '').toLowerCase();
+        const items = POSES.filter(p => {
+          const matchesQ = !q || [p.english, p.sanskrit, p.transliteration].join(' ').toLowerCase().includes(q);
+          const matchesC = !c || (p.category||'').toLowerCase() === c;
+          return matchesQ && matchesC;
+        });
+        grid.innerHTML = items.map((p, idx) => `
+          <button class="posture-card" role="button" aria-label="Open posture ${p.english}" data-idx="${idx}">
+            <div class="posture-media" aria-hidden="true">🧘</div>
+            <div class="posture-body">
+              <div class="row" style="justify-content:space-between; align-items:center;">
+                <strong>${p.english}</strong>
+                <span class="${levelClass(p.level)}">${p.level}</span>
+              </div>
+              <div class="devanagari">${p.sanskrit || ''}</div>
+              <div class="translit">${p.transliteration || ''}</div>
+            </div>
+          </button>
+        `).join('');
+        grid.querySelectorAll('.posture-card').forEach(card => {
+          card.addEventListener('click', () => openModal(items[parseInt(card.getAttribute('data-idx'),10)]));
+          card.addEventListener('keydown', (e) => { if (e.key === 'Enter') openModal(items[parseInt(card.getAttribute('data-idx'),10)]); });
+        });
+      }
+      function openModal(p) {
+        pmTitle.textContent = p.english;
+        const hasGuide = !!p.guide;
+        pmBody.innerHTML = `
+          <div class="row" style="gap:12px; align-items:flex-start;">
+            <div class="posture-media" style="width:140px; height:140px;">🧘</div>
+            <div style="flex:1;">
+              <div class="devanagari">${p.sanskrit || ''}</div>
+              <div class="translit">${p.transliteration || ''}</div>
+              <div class="small" style="margin-top:6px;">Category: ${p.category || ''}</div>
+              <div class="row" style="margin-top:6px;">${(p.tags||[]).map(tg => `<span class='chip'>${tg}</span>`).join(' ')}</div>
+              <div class="muted" style="margin-top:8px;">${p.notes || ''}</div>
+            </div>
+          </div>
+          <div class="row" style="justify-content:flex-end; margin-top:10px;">
+            <button class="btn ${hasGuide? '': 'ghost'}" ${hasGuide? '': 'disabled'} aria-label="Guide me">Guide me</button>
+          </div>
+        `;
+        modal.setAttribute('open',''); modal.setAttribute('aria-hidden','false');
+      }
+      function closeModal(){ modal.removeAttribute('open'); modal.setAttribute('aria-hidden','true'); }
+
+      search.addEventListener('input', draw);
+      cat.addEventListener('change', draw);
+      draw();
+      AppRoot.focus();
     }
 
     // Kickoff
