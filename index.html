@@ -67,7 +67,7 @@
     img { max-width: 100%; display: block; }
 
     .container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 24px 16px 96px;
     }
@@ -510,8 +510,9 @@
           return renderJoin(query);
         case '#/teacher':
           return renderTeacherPortal();
-        case '#/portal':
-          return renderStudentPortal(query);
+        case '#/portal': // legacy explore
+        case '#/explore':
+          return renderExploreHub();
         default:
           navigate('#/');
       }
@@ -549,7 +550,7 @@
           <div class="row" role="group" aria-label="Primary Calls to Action" style="justify-content:center; gap:10px;">
             <a class="btn" href="#/join" role="button">Enter Teacher Code</a>
             <a class="btn secondary" href="#/teacher" role="button">I'm a Teacher</a>
-            <button class="btn ghost" id="cta-demo" aria-label="Explore Demo">Explore Demo</button>
+            <a class="btn ghost" href="#/explore" role="button" aria-label="Explore Demo">Explore Demo</a>
           </div>
         </section>
 
@@ -564,10 +565,6 @@
           </div>
         </section>
       `;
-      document.getElementById('cta-demo').addEventListener('click', () => {
-        const demo = teacherByCode(demoCode);
-        if (demo) { App.state.activeTeacherId = demo.id; persist(); navigate('#/portal'); }
-      });
       AppRoot.focus();
     }
 
@@ -1468,7 +1465,7 @@
       if (!t) { navigate('#/join'); return; }
       setToolbarForTeacher(t);
       const tabs = [];
-      if (t.modules.strengthasana) tabs.push('Assigned','Strengthāsana');
+      if (t.modules.strengthasana) tabs.push('Assigned Studies','Strengthāsana');
       if (t.modules.mantras) tabs.push('Mantras');
       if (t.modules.breathpacer) tabs.push('BreathPacer');
       if (t.modules.pranayama) tabs.push('Paripūrṇa Prāṇa');
@@ -1500,7 +1497,7 @@
         document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', b.getAttribute('data-tab') === tab ? 'true' : 'false'));
         const host = document.getElementById('tab-content');
         host.innerHTML = '';
-        if (tab === 'Assigned') drawAssigned(host, t);
+        if (tab === 'Assigned Studies') drawAssigned(host, t);
         if (tab === 'Strengthāsana') drawStrength(host, t, query);
         if (tab === 'Mantras') drawMantrasStudent(host, t);
         if (tab === 'BreathPacer') drawBreathPacer(host);
@@ -1508,6 +1505,88 @@
       }
       document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', (e) => activate(e.currentTarget.getAttribute('data-tab'))));
       activate(activeTab);
+      AppRoot.focus();
+    }
+
+    // Explore Hub (Students left, Teachers right)
+    function renderExploreHub() {
+      const t = App.activeTeacher || App.state.teachers[App.state.demoTeacherId];
+      AppRoot.innerHTML = `
+        <section class="grid" aria-label="Explore">
+          <div class="two-col" style="gap:24px;">
+            <section aria-labelledby="students-h2">
+              <div class="card">
+                <h2 id="students-h2">Students</h2>
+              </div>
+              <div class="grid" style="gap:16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+                <div class="card">
+                  <strong>Assigned Studies</strong>
+                  <div class="small">View your assigned programs and mark sessions complete.</div>
+                  <div class="space"></div>
+                  <div class="row" style="justify-content:flex-end;">
+                    <a class="btn" href="#/assigned" aria-label="Open Assigned Studies">Open</a>
+                  </div>
+                </div>
+                <div class="card">
+                  <strong>Traditional Mantras</strong>
+                  <div class="small">Browse and recite teacher-published mantras.</div>
+                  <div class="space"></div>
+                  <div class="row" style="justify-content:flex-end;">
+                    <a class="btn" href="#/mantras" aria-label="Open Traditional Mantras">Open</a>
+                  </div>
+                </div>
+                <div class="card">
+                  <strong>BreathPacer</strong>
+                  <div class="small">Pace inhales/exhales with visual guidance.</div>
+                  <div class="space"></div>
+                  <div class="row" style="justify-content:flex-end;">
+                    <a class="btn" href="#/breathpacer" aria-label="Open BreathPacer">Open</a>
+                  </div>
+                </div>
+              </div>
+              ${(!App.state.activeTeacherId ? `<div class="card"><div class="muted">No teacher selected. Assigned Studies will appear after you join a teacher.</div><div class="space"></div><a class="btn" href="#/join">Join a teacher</a></div>` : '')}
+            </section>
+
+            <section aria-labelledby="teachers-h2">
+              <div class="card">
+                <h2 id="teachers-h2">Teachers</h2>
+              </div>
+              <div class="grid" style="gap:16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+                <div class="card">
+                  <strong>Strengthāsana</strong>
+                  <div class="small">Create and publish signature sequences.</div>
+                  <div class="space"></div>
+                  <div class="row" style="justify-content:flex-end;">
+                    <button class="btn" data-open="#/strengthasana" aria-label="Open Strengthāsana">Open</button>
+                  </div>
+                </div>
+                <div class="card">
+                  <strong>Paripūrṇa Prāṇa</strong>
+                  <div class="small">Breath presets and guidance for class pacing.</div>
+                  <div class="space"></div>
+                  <div class="row" style="justify-content:flex-end;">
+                    <button class="btn" data-open="#/pranayama" aria-label="Open Paripūrṇa Prāṇa">Open</button>
+                  </div>
+                </div>
+                <div class="card">
+                  <strong>Mantra Generator</strong>
+                  <div class="small">Design new mantras and publish to your studio.</div>
+                  <div class="space"></div>
+                  <div class="row" style="justify-content:flex-end;">
+                    <button class="btn" data-open="#/mantra-generator" aria-label="Open Mantra Generator">Open</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+      `;
+      // Gate teacher actions
+      AppRoot.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', (e) => {
+        const href = e.currentTarget.getAttribute('data-open');
+        if (!App.state.currentTeacherId) { showToast('Teacher sign-in required.'); navigate('#/teacher'); return; }
+        navigate(href);
+      }));
       AppRoot.focus();
     }
 
@@ -1685,7 +1764,7 @@
     function drawAssigned(host, t) {
       const assignments = t.assignments;
       if (assignments.length === 0) { host.appendChild(el(`<div class="card"><div class="muted">No assignments yet.</div></div>`)); return; }
-      host.appendChild(el(`<div class="card"><h3>Assigned Programs</h3></div>`));
+      host.appendChild(el(`<div class="card"><h3>Assigned Studies</h3></div>`));
       assignments.forEach(a => {
         const prog = t.programs.find(p => p.id === a.programId);
         if (!prog) return;
