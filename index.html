@@ -17,11 +17,13 @@
       --card: #121a30;
       --card-2: #192448;
       --text: #ecf1ff;
+      --text-primary: #ecf1ff; /* alias for content text */
       --muted: #b9c7e9;
       --text-muted: var(--muted);
       --accent-teal: #2dd4bf; /* teal */
       --accent-amber: #f59e0b; /* amber */
       --ring: rgba(45,212,191,0.45);
+      --accent: var(--brand); /* alias for accent headings */
       --success: #22c55e;
       --warn: #f59e0b;
       --danger: #ef4444;
@@ -213,6 +215,10 @@
     .modal-card { width: min(720px, 92vw); background: linear-gradient(180deg, var(--card), var(--card-2)); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 16px; box-shadow: var(--shadow-1); animation: fadeIn 200ms ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes introFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    /* About */
+    .about-section { max-width: 850px; margin: 4rem auto; padding: 0 1.5rem; line-height: 1.7; color: var(--text-primary); }
+    .about-section h1, .about-section h2 { text-align: center; color: var(--accent); margin-bottom: 1rem; }
+    .fade-in { opacity: 0; animation: introFade 400ms ease forwards; }
   </style>
 </head>
 <body>
@@ -1532,16 +1538,19 @@
 
     function renderAbout() {
       AppRoot.innerHTML = `
-        <section class="grid" aria-label="About DailyYogaMove">
-          <div class="card">
-            <h3>About</h3>
-            <div class="space"></div>
-            <div class="intro-block" style="margin-top:0;">
-              <div>DailyYogaMove is a white-label platform connecting yoga teachers and students for seamless remote practice.</div>
-              <div>It serves as a living library of postures, mantras, and breathwork — a digital ashram for modern seekers.</div>
-              <div>Built to inspire teachers to refine, record, and share their evolving yoga journey.</div>
-            </div>
-          </div>
+        <section class="about-section fade-in" aria-label="About DailyYogaMove">
+          <h1>About DailyYogaMove</h1>
+
+          <p>DailyYogaMove was born from the lineage of true practice — created by yogis for yogis — to restore depth, continuity, and right livelihood to the teaching path. It is not a corporate product but a living vessel of connection, designed to transmit authentic yogic wisdom through modern means.</p>
+
+          <p>At its heart, DailyYogaMove is a bridge between teachers and students: a white-label ecosystem where each teacher can shape the look, rhythm, and expression of their own digital āśrama. Within these sanctuaries flow guided sequences, mantras, prāṇāyāma, and study texts — drawn from an ever-expanding library that honors both tradition and creative evolution.</p>
+
+          <p>The platform sustains the cycle of giving and receiving: teachers generate recurring revenue through their personalized spaces, while students receive an affordable and deeply guided practice environment.</p>
+
+          <p>Powered by <strong>Akasha A.I.</strong>, an original repository of Sanskrit and Vedic knowledge, DailyYogaMove weaves ancient understanding with present technology — ensuring that yoga’s transmission remains alive, precise, and accessible to the world.</p>
+
+          <h2>The Vision</h2>
+          <p>DailyYogaMove stands at the intersection of lineage and innovation — offering teachers the tools to build lasting digital sanctuaries and students a trusted space to practice with purpose. Its mission is simple: to preserve authenticity, empower independence, and let yoga’s timeless wisdom flow freely through modern connection.</p>
         </section>
       `;
       AppRoot.focus();
