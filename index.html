@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DailyYogaMove</title>
+  <meta name="description" content="DailyYogaMove – Teachers, students, sequences, and breath pacing." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-start: #0b1020;
+      --bg-end: #101a3a;
+      --card: #151c33;
+      --card-2: #1b2442;
+      --text: #e9eefc;
+      --muted: #b9c3e1;
+      --ring: #6ea8fe;
+      --success: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --chip: #223059;
+      --chip-pub: #113d2e;
+      --chip-draft: #3d3011;
+      --focus: 0 0 0 3px rgba(110,168,254,0.35);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --shadow-1: 0 8px 30px rgba(0,0,0,0.35);
+      --shadow-2: 0 4px 12px rgba(0,0,0,0.25);
+      --gap: 12px;
+      --gap-lg: 18px;
+      --transition: 160ms ease;
+      --brand: #6ea8fe; /* dynamic per teacher */
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(1200px 800px at 20% 0%, rgba(255,255,255,0.04), transparent 60%),
+                  linear-gradient(160deg, var(--bg-start), var(--bg-end));
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 20px 16px 80px;
+    }
+    header[role="banner"] {
+      position: sticky; top: 0; z-index: 10;
+      background: linear-gradient(180deg, rgba(16,26,58,0.92), rgba(16,26,58,0.5) 60%, transparent);
+      backdrop-filter: blur(8px);
+    }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--gap);
+      padding: 14px 16px;
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: 10px; font-weight: 700;
+    }
+    .brand-badge {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: conic-gradient(from 90deg, var(--brand), #9bd1ff);
+      box-shadow: var(--shadow-2);
+    }
+    .nav-actions { display: flex; gap: 8px; }
+
+    .btn {
+      background: var(--brand);
+      color: #0b1020;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 600;
+      box-shadow: var(--shadow-2);
+      transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:focus-visible { outline: none; box-shadow: var(--focus); }
+    .btn.secondary { background: #25325d; color: var(--text); }
+    .btn.ghost { background: transparent; border: 1px solid #2b3a72; color: var(--text); }
+    .btn.danger { background: var(--danger); color: #0b1020; }
+    .btn.warn { background: var(--warn); color: #0b1020; }
+    .btn.success { background: var(--success); color: #08130a; }
+    .btn.sm { padding: 6px 10px; font-weight: 600; }
+
+    .hero { margin: 28px 0 24px; text-align: center; }
+    .hero h1 { font-size: 28px; margin: 0 0 10px; }
+    .hero p { color: var(--muted); margin: 0 0 16px; }
+
+    .grid { display: grid; gap: var(--gap); }
+    @media (min-width: 740px) { .grid.cols-2 { grid-template-columns: 1fr 1fr; } }
+
+    .card {
+      background: linear-gradient(180deg, var(--card), var(--card-2));
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow-1);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .card h3 { margin: 0 0 10px; font-size: 16px; }
+    .muted { color: var(--muted); }
+    .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .space { height: 10px; }
+    .spacer { flex: 1; }
+
+    .input, select, textarea {
+      width: 100%; background: #0f1835; border: 1px solid #2b3a72; color: var(--text);
+      border-radius: 10px; padding: 10px 12px; outline: none; transition: box-shadow var(--transition), border var(--transition);
+    }
+    .input:focus, select:focus, textarea:focus { box-shadow: var(--focus); border-color: var(--brand); }
+    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 999px; background: var(--chip); color: #cfe3ff; font-weight: 600; font-size: 12px; }
+    .chip.pub { background: var(--chip-pub); color: #bbf7d0; }
+    .chip.draft { background: var(--chip-draft); color: #fde68a; }
+
+    .list { display: grid; gap: 10px; }
+    .seq-item { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 10px; border: 1px solid #2b3a72; border-radius: 12px; background: #0f1835; }
+    .seq-actions { display: flex; gap: 6px; }
+
+    .tabs { display: flex; gap: 8px; border-bottom: 1px solid #27356b; margin-bottom: 12px; flex-wrap: wrap; }
+    .tab { padding: 8px 10px; border-radius: 8px 8px 0 0; background: #0f1835; border: 1px solid #27356b; border-bottom: none; font-weight: 600; }
+    .tab[aria-selected="true"] { background: #1a2553; color: #d6e6ff; }
+
+    .tooltip { position: relative; }
+    .tooltip[data-copied="true"]::after {
+      content: "Copied";
+      position: absolute; top: -28px; right: 0; background: #0f1835; color: #d6e6ff;
+      border: 1px solid #2b3a72; padding: 4px 8px; border-radius: 8px; white-space: nowrap;
+      box-shadow: var(--shadow-2);
+    }
+
+    .drag-handle { cursor: grab; user-select: none; padding: 6px 8px; border-radius: 8px; background: #0f1835; border: 1px dashed #2b3a72; }
+    .pose-item { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: start; background: #0f1835; border: 1px solid #2b3a72; border-radius: 10px; padding: 10px; }
+    .pose-fields { display: grid; gap: 6px; }
+    .pose-row { display: grid; grid-template-columns: 1fr 1fr 110px; gap: 8px; }
+    .pose-tools { display: flex; gap: 6px; }
+
+    .player { display: grid; gap: 10px; }
+    .timer { font-variant-numeric: tabular-nums; font-size: 28px; font-weight: 700; }
+    .breath-circle { width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #9bd1ff, var(--brand)); margin: 10px auto; transition: transform 4s ease-in-out; box-shadow: 0 0 0 8px rgba(110,168,254,0.2), 0 0 30px rgba(110,168,254,0.3) inset; }
+    .small { font-size: 12px; color: var(--muted); }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+  </style>
+</head>
+<body>
+  <header role="banner" aria-label="Top Navigation">
+    <div class="nav container">
+      <a class="brand" href="#/" aria-label="DailyYogaMove Home">
+        <span class="brand-badge" aria-hidden="true"></span>
+        <span>DailyYogaMove</span>
+      </a>
+      <nav class="nav-actions" aria-label="Primary">
+        <a class="btn ghost" href="#/join" role="button" aria-label="Join">Join</a>
+        <a class="btn" href="#/teacher" role="button" aria-label="Teacher Portal">Teacher</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="app" class="container" role="main" tabindex="-1"></main>
+
+  <footer class="container" role="contentinfo">
+    <div class="small">MVP prototype. Data saved locally. <!-- TODO: replace localStorage with Supabase (auth, RLS, tables) --></div>
+  </footer>
+
+  <script>
+    // Store and App State Utilities
+    const STORAGE_KEY = 'dym:store:v1';
+    const SAVE_DEBOUNCE_MS = 300;
+    let saveTimeout = null;
+
+    function nowIso() { return new Date().toISOString(); }
+    function generateId(prefix = 'id') { return prefix + '_' + Math.random().toString(36).slice(2, 10); }
+    function generateCode(length = 6) {
+      const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+      let out = '';
+      for (let i = 0; i < length; i++) out += chars[Math.floor(Math.random() * chars.length)];
+      return out;
+    }
+    function copyToClipboard(text, el) {
+      navigator.clipboard.writeText(text).then(() => {
+        const host = el.closest('.tooltip');
+        if (host) {
+          host.dataset.copied = 'true';
+          setTimeout(() => { delete host.dataset.copied; }, 1200);
+        }
+      });
+    }
+
+    const Store = {
+      load() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return null;
+          return JSON.parse(raw);
+        } catch (e) { return null; }
+      },
+      save(newState) {
+        if (saveTimeout) clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+        }, SAVE_DEBOUNCE_MS);
+      }
+    };
+
+    const App = {
+      state: {
+        teachers: {},
+        currentTeacherId: null,
+        activeTeacherId: null,
+        demoTeacherId: null
+      },
+      get teacher() { return this.state.currentTeacherId ? this.state.teachers[this.state.currentTeacherId] : null; },
+      get activeTeacher() { return this.state.activeTeacherId ? this.state.teachers[this.state.activeTeacherId] : null; },
+      setTeacherColor(color) { document.documentElement.style.setProperty('--brand', color || '#6ea8fe'); }
+    };
+
+    function ensureDemoSeed() {
+      // Seed DEMO teacher if missing
+      const existingDemo = Object.values(App.state.teachers).find(t => t.code === 'DEMO');
+      if (existingDemo) { App.state.demoTeacherId = existingDemo.id; return; }
+      const demoId = generateId('t');
+      const demoSeqId = generateId('seq');
+      const demoSeq2Id = generateId('seq');
+      const demoProgramId = generateId('prog');
+      App.state.teachers[demoId] = {
+        id: demoId,
+        email: 'demo@dym.test',
+        name: 'DEMO Studio',
+        logoUrl: '',
+        color: '#7dd3fc',
+        welcome: 'Welcome to your practice. Explore, breathe, and move with presence.',
+        code: 'DEMO',
+        studioMode: false,
+        subTeachers: [],
+        modules: { breathpacer: true, pranayama: true, strengthasana: true, mantras: true },
+        sequences: [
+          {
+            id: demoSeqId,
+            title: 'Sunrise Flow',
+            level: 'Beginner', tags: ['warmup','morning'], duration: 18,
+            status: 'Published',
+            poses: [
+              { name: 'Tadasana', cues: 'Root feet. Lengthen spine. Relax jaw.', hold: 30 },
+              { name: 'Uttanasana', cues: 'Fold from hips. Soften knees.', hold: 30 },
+              { name: 'Adho Mukha Svanasana', cues: 'Hands press, sit bones up.', hold: 45 },
+              { name: 'Bhujangasana', cues: 'Lift heart, shoulders soft.', hold: 30 }
+            ],
+            breathNotes: 'Inhale to lengthen, exhale to fold.',
+            mediaUrl: ''
+          },
+          {
+            id: demoSeq2Id,
+            title: 'Core Ignite', level: 'Inter', tags: ['core','strength'], duration: 22,
+            status: 'Draft',
+            poses: [
+              { name: 'Plank', cues: 'Heels back, crown forward.', hold: 45 },
+              { name: 'Side Plank', cues: 'Lift hips, stack shoulders.', hold: 30 }
+            ],
+            breathNotes: 'Steady ujjayi throughout.', mediaUrl: ''
+          }
+        ],
+        programs: [
+          {
+            id: demoProgramId,
+            title: '2-Week Reset',
+            description: 'Gentle re-entry with daily 20 minutes. Rest on Sundays.',
+            schedule: [
+              { day: 1, label: 'Mon - Sunrise Flow', sequenceId: demoSeqId },
+              { day: 2, label: 'Tue - Breath + Flow', sequenceId: demoSeqId },
+              { day: 3, label: 'Wed - Sunrise Flow', sequenceId: demoSeqId },
+              { day: 4, label: 'Thu - Sunrise Flow', sequenceId: demoSeqId },
+              { day: 5, label: 'Fri - Sunrise Flow', sequenceId: demoSeqId },
+              { day: 6, label: 'Sat - Optional', sequenceId: null },
+              { day: 7, label: 'Sun - Rest', sequenceId: null },
+              { day: 8, label: 'Mon - Sunrise Flow', sequenceId: demoSeqId },
+              { day: 9, label: 'Tue - Sunrise Flow', sequenceId: demoSeqId },
+              { day: 10, label: 'Wed - Sunrise Flow', sequenceId: demoSeqId },
+              { day: 11, label: 'Thu - Sunrise Flow', sequenceId: demoSeqId },
+              { day: 12, label: 'Fri - Sunrise Flow', sequenceId: demoSeqId },
+              { day: 13, label: 'Sat - Optional', sequenceId: null },
+              { day: 14, label: 'Sun - Rest', sequenceId: null }
+            ]
+          }
+        ],
+        assignments: [],
+        students: [],
+        mantras: [
+          { id: generateId('m'), title: 'Om', text: 'ॐ', meaning: 'Primordial sound', usage: 'Centering', recitations: 3, published: true },
+          { id: generateId('m'), title: 'So Hum', text: 'सो ऽहम्', meaning: 'I am That', usage: 'Breath awareness', recitations: 5, published: true }
+        ],
+        analytics: {
+          portalVisits: [], // {studentCode, at}
+          completions: [] // {studentCode, sequenceId, at}
+        }
+      };
+      App.state.demoTeacherId = demoId;
+    }
+
+    function init() {
+      const saved = Store.load();
+      if (saved) App.state = saved; else Store.save(App.state);
+      ensureDemoSeed();
+      // Apply teacher theme color where relevant
+      const t = App.teacher || App.activeTeacher || App.state.teachers[App.state.demoTeacherId];
+      App.setTeacherColor(t?.color);
+    }
+
+    function persist() { Store.save(App.state); }
+
+    // Router
+    const AppRoot = document.getElementById('app');
+    function parseHash() {
+      const raw = location.hash || '#/';
+      const [path, queryStr] = raw.split('?');
+      const query = Object.fromEntries(new URLSearchParams(queryStr || ''));
+      return { path, query };
+    }
+    function navigate(hash) {
+      if (location.hash !== hash) location.hash = hash; else render();
+    }
+    window.addEventListener('hashchange', () => { render(); });
+
+    function render() {
+      const { path, query } = parseHash();
+      // Smooth scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      switch (path) {
+        case '#/':
+        case '#':
+        case '':
+          return renderLanding();
+        case '#/join':
+          return renderJoin(query);
+        case '#/teacher':
+          return renderTeacherPortal();
+        case '#/portal':
+          return renderStudentPortal(query);
+        default:
+          navigate('#/');
+      }
+    }
+
+    // UI Helpers
+    function el(html) { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild; }
+    function setToolbarForTeacher(teacher) { App.setTeacherColor(teacher?.color); }
+    function teacherByCode(code) {
+      code = (code || '').trim().toUpperCase();
+      // match teacher code
+      let found = Object.values(App.state.teachers).find(t => (t.code || '').toUpperCase() === code);
+      if (found) return found;
+      // match sub-teacher code to parent studio
+      for (const t of Object.values(App.state.teachers)) {
+        if (Array.isArray(t.subTeachers) && t.subTeachers.find(st => (st.code || '').toUpperCase() === code)) {
+          return t; // map sub-teacher code to parent studio theme/portal
+        }
+      }
+      return null;
+    }
+    function shortTags(tags) {
+      if (!tags || !tags.length) return '';
+      return tags.map(t => `<span class="chip">${t}</span>`).join(' ');
+    }
+    function statusChip(status) { return `<span class="chip ${status==='Published'?'pub':'draft'}">${status}</span>`; }
+
+    // Landing
+    function renderLanding() {
+      const demoCode = 'DEMO';
+      AppRoot.innerHTML = `
+        <section class="hero" aria-labelledby="hero-title">
+          <h1 id="hero-title">Practice. Sequence. Teach.</h1>
+          <p>Mobile-first yoga teaching and student portal with breath pacing.</p>
+          <div class="row" role="group" aria-label="Primary Calls to Action" style="justify-content:center; gap:10px;">
+            <a class="btn" href="#/join" role="button">Enter Teacher Code</a>
+            <a class="btn secondary" href="#/teacher" role="button">I'm a Teacher</a>
+            <button class="btn ghost" id="cta-demo" aria-label="Explore Demo">Explore Demo</button>
+          </div>
+        </section>
+
+        <section class="grid cols-2" aria-label="Highlights">
+          <div class="card">
+            <h3>Signature Sequences</h3>
+            <p class="muted">Create draft or publish. Share with a link or QR. Drag to reorder poses with keyboard fallback.</p>
+          </div>
+          <div class="card">
+            <h3>Programs & Assignments</h3>
+            <p class="muted">Compose weekly plans and assign to students by code or all.</p>
+          </div>
+        </section>
+      `;
+      document.getElementById('cta-demo').addEventListener('click', () => {
+        const demo = teacherByCode(demoCode);
+        if (demo) { App.state.activeTeacherId = demo.id; persist(); navigate('#/portal'); }
+      });
+      AppRoot.focus();
+    }
+
+    // Join
+    function renderJoin(query) {
+      const prefill = query.code || '';
+      AppRoot.innerHTML = `
+        <section class="grid" aria-labelledby="join-title">
+          <div class="card">
+            <h3 id="join-title">Join a Teacher's Portal</h3>
+            <div class="space"></div>
+            <label for="join-code">Teacher Code</label>
+            <div class="row">
+              <input id="join-code" class="input" inputmode="text" autocomplete="off" placeholder="e.g. DEMO" value="${prefill}" aria-describedby="join-help" />
+              <button id="join-btn" class="btn" aria-label="Join">Join</button>
+            </div>
+            <div id="join-help" class="small">Tip: Use DEMO to explore.</div>
+          </div>
+        </section>
+      `;
+      const input = document.getElementById('join-code');
+      const btn = document.getElementById('join-btn');
+      function act() {
+        const code = input.value.trim();
+        const t = teacherByCode(code);
+        if (!t) { input.setCustomValidity('Invalid code'); input.reportValidity(); return; }
+        App.state.activeTeacherId = t.id;
+        // track visit
+        t.analytics.portalVisits.push({ studentCode: 'anon', at: nowIso() });
+        persist();
+        navigate('#/portal');
+      }
+      btn.addEventListener('click', act);
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') act(); });
+      AppRoot.focus();
+    }
+
+    // Teacher Portal
+    function renderTeacherPortal() {
+      // Fake auth by email; store currentTeacherId
+      const t = App.teacher;
+      if (!t) {
+        AppRoot.innerHTML = `
+          <section class="card" aria-labelledby="auth-title">
+            <h3 id="auth-title">Teacher Login</h3>
+            <div class="space"></div>
+            <label for="email">Email</label>
+            <div class="row">
+              <input id="email" class="input" type="email" placeholder="you@studio.com" aria-describedby="auth-note" />
+              <button id="login" class="btn">Continue</button>
+            </div>
+            <div id="auth-note" class="small">No password required. <!-- TODO: replace fake auth with magic-link --></div>
+          </section>
+        `;
+        document.getElementById('login').addEventListener('click', () => {
+          const email = /** @type {HTMLInputElement} */(document.getElementById('email')).value.trim();
+          if (!email) return;
+          let teacher = Object.values(App.state.teachers).find(x => x.email === email);
+          if (!teacher) {
+            const id = generateId('t');
+            const code = generateCode();
+            teacher = {
+              id, email, name: email.split('@')[0], logoUrl: '', color: '#6ea8fe', welcome: 'Welcome, set your studio profile.',
+              code, studioMode: false, subTeachers: [], modules: { breathpacer: true, pranayama: true, strengthasana: true, mantras: true },
+              sequences: [], programs: [], assignments: [], students: [], mantras: [], analytics: { portalVisits: [], completions: [] }
+            };
+            App.state.teachers[id] = teacher;
+          }
+          App.state.currentTeacherId = teacher.id; App.setTeacherColor(teacher.color); persist(); renderTeacherPortal();
+        });
+        AppRoot.focus();
+        return;
+      }
+
+      setToolbarForTeacher(t);
+      const totalStudents = t.students.length;
+      const weekAgo = Date.now() - 7*24*60*60*1000;
+      const activeThisWeek = t.analytics.portalVisits.filter(v => new Date(v.at).getTime() >= weekAgo).length;
+      const assignedPrograms = t.assignments.length;
+
+      AppRoot.innerHTML = `
+        <section class="grid" aria-label="Teacher Portal">
+          <div class="row" role="group" aria-label="Studio Stats">
+            <div class="chip">Students: ${totalStudents}</div>
+            <div class="chip">Active this week: ${activeThisWeek}</div>
+            <div class="chip">Assignments: ${assignedPrograms}</div>
+            <span class="spacer"></span>
+            <button id="logout" class="btn ghost">Log out</button>
+          </div>
+
+          <div class="grid cols-2">
+            <div class="card" aria-labelledby="profile-title">
+              <h3 id="profile-title">Profile</h3>
+              <div class="grid">
+                <div>
+                  <label for="name">Studio/Name</label>
+                  <input id="name" class="input" value="${t.name || ''}" />
+                </div>
+                <div>
+                  <label for="logo">Logo URL</label>
+                  <input id="logo" class="input" value="${t.logoUrl || ''}" />
+                </div>
+                <div>
+                  <label for="color">Brand Color</label>
+                  <input id="color" class="input" type="color" value="${t.color || '#6ea8fe'}" />
+                </div>
+                <div>
+                  <label for="welcome">Welcome Text</label>
+                  <textarea id="welcome" class="input" rows="3">${t.welcome || ''}</textarea>
+                </div>
+                <div class="row tooltip" aria-live="polite">
+                  <div class="chip">Code: <strong>${t.code}</strong></div>
+                  <button class="btn sm" id="copy-code">Copy</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" aria-labelledby="modules-title">
+              <h3 id="modules-title">Modules</h3>
+              <div class="list">
+                ${['breathpacer','pranayama','strengthasana','mantras'].map(m => `
+                  <label class="row" style="justify-content:space-between;">
+                    <span style="text-transform:capitalize;">${m}</span>
+                    <input type="checkbox" data-module="${m}" ${t.modules[m]?'checked':''} aria-label="Toggle ${m}" />
+                  </label>
+                `).join('')}
+                <div class="space"></div>
+                <label class="row" style="justify-content:space-between;">
+                  <span>Studio Mode</span>
+                  <input type="checkbox" id="studio-mode" ${t.studioMode?'checked':''} />
+                </label>
+                <div id="sub-teachers" class="list" ${t.studioMode?'':'hidden'}>
+                  <div class="row">
+                    <input id="sub-name" class="input" placeholder="Sub-teacher name" />
+                    <input id="sub-email" class="input" type="email" placeholder="email@studio.com" />
+                    <button id="add-sub" class="btn sm">Add</button>
+                  </div>
+                  ${t.subTeachers.map(st => `
+                    <div class="row" style="justify-content:space-between;"> 
+                      <span>${st.name} • ${st.email} • Code: <strong>${st.code}</strong></span>
+                      <button class="btn ghost sm" data-del-sub="${st.id}">Remove</button>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" aria-labelledby="seq-title">
+            <h3 id="seq-title">Signature Sequences</h3>
+            <div class="row">
+              <button id="new-seq" class="btn">New Sequence</button>
+              <span class="spacer"></span>
+              <div class="small">Share: opens link to <code>#/portal?seq=&lt;id&gt;</code></div>
+            </div>
+            <div id="seq-list" class="list" style="margin-top:10px;"></div>
+            <div id="seq-editor"></div>
+          </div>
+
+          <div class="grid cols-2">
+            <div class="card" aria-labelledby="prog-title">
+              <h3 id="prog-title">Programs</h3>
+              <div class="row">
+                <input id="prog-title-input" class="input" placeholder="Program title" />
+                <button id="prog-add" class="btn sm">Create</button>
+              </div>
+              <div class="space"></div>
+              <div id="prog-list" class="list"></div>
+            </div>
+            <div class="card" aria-labelledby="assign-title">
+              <h3 id="assign-title">Assignments</h3>
+              <div class="row">
+                <select id="assign-prog"></select>
+              </div>
+              <div class="row">
+                <input id="assign-codes" class="input" placeholder="Student codes (comma) or leave blank = All" />
+                <button id="assign-btn" class="btn sm">Assign</button>
+              </div>
+              <div class="row">
+                <input id="assign-due" class="input" type="date" aria-label="Due date (optional)" />
+              </div>
+              <div class="space"></div>
+              <div class="row tooltip">
+                <button id="invite-student" class="btn sm">Invite Student</button>
+                <span class="small">Generates link to <code>#/join?code=${t.code}</code></span>
+              </div>
+              <div class="space"></div>
+              <div id="assign-table" class="list"></div>
+            </div>
+          </div>
+
+          <div class="card" aria-labelledby="mantra-title">
+            <h3 id="mantra-title">Mantras</h3>
+            <div class="row">
+              <input id="mantra-title-input" class="input" placeholder="Title" />
+              <input id="mantra-text-input" class="input" placeholder="Text" />
+            </div>
+            <div class="row">
+              <input id="mantra-meaning-input" class="input" placeholder="Meaning" />
+              <input id="mantra-usage-input" class="input" placeholder="Usage" />
+              <input id="mantra-recitations-input" class="input" type="number" min="1" value="3" />
+              <button id="mantra-add" class="btn sm">Add</button>
+            </div>
+            <div class="space"></div>
+            <div id="mantra-list" class="list"></div>
+          </div>
+        </section>
+      `;
+
+      // Profile bindings
+      document.getElementById('logout').addEventListener('click', () => { App.state.currentTeacherId = null; persist(); renderTeacherPortal(); });
+      document.getElementById('copy-code').addEventListener('click', (e) => copyToClipboard(t.code, e.currentTarget));
+      ['name','logo','color','welcome'].forEach(id => {
+        const node = document.getElementById(id);
+        node.addEventListener('input', () => {
+          const map = { name: 'name', logo: 'logoUrl', color: 'color', welcome: 'welcome' };
+          t[map[id]] = node.value;
+          if (id === 'color') App.setTeacherColor(node.value);
+          persist();
+        });
+      });
+
+      // Modules toggle
+      document.querySelectorAll('[data-module]').forEach(chk => {
+        chk.addEventListener('change', (e) => {
+          const key = e.currentTarget.getAttribute('data-module');
+          t.modules[key] = e.currentTarget.checked; persist();
+        });
+      });
+      const studioToggle = document.getElementById('studio-mode');
+      studioToggle.addEventListener('change', (e) => { t.studioMode = e.currentTarget.checked; persist(); renderTeacherPortal(); });
+      const addSub = document.getElementById('add-sub');
+      if (addSub) addSub.addEventListener('click', () => {
+        const name = document.getElementById('sub-name').value.trim();
+        const email = document.getElementById('sub-email').value.trim();
+        if (!name || !email) return;
+        const st = { id: generateId('sub'), name, email, code: generateCode() };
+        t.subTeachers.push(st); persist(); renderTeacherPortal();
+      });
+      document.querySelectorAll('[data-del-sub]').forEach(btn => btn.addEventListener('click', (e) => {
+        const id = e.currentTarget.getAttribute('data-del-sub');
+        t.subTeachers = t.subTeachers.filter(x => x.id !== id); persist(); renderTeacherPortal();
+      }));
+
+      // Sequences list
+      const seqList = document.getElementById('seq-list');
+      function drawSeqList() {
+        seqList.innerHTML = t.sequences.map(s => `
+          <div class="seq-item" data-seq="${s.id}">
+            <div>
+              <div class="row" style="gap:8px;">
+                <strong>${s.title}</strong>
+                ${statusChip(s.status || 'Draft')}
+                ${shortTags(s.tags)}
+              </div>
+              <div class="small">Level: ${s.level || 'Beginner'} • Duration: ${s.duration || 0} min</div>
+            </div>
+            <div class="seq-actions" role="group" aria-label="Sequence actions">
+              <button class="btn sm ghost" data-act="edit">Edit</button>
+              <button class="btn sm ghost" data-act="dup">Duplicate</button>
+              <button class="btn sm ghost tooltip" data-act="share">Share</button>
+              <button class="btn sm danger" data-act="del">Delete</button>
+            </div>
+          </div>
+        `).join('');
+        seqList.querySelectorAll('.seq-item .btn').forEach(btn => btn.addEventListener('click', (e) => {
+          const seqId = e.currentTarget.closest('.seq-item').getAttribute('data-seq');
+          const act = e.currentTarget.getAttribute('data-act');
+          const seq = t.sequences.find(x => x.id === seqId);
+          if (act === 'edit') drawSeqEditor(seq);
+          if (act === 'dup') { const copy = JSON.parse(JSON.stringify(seq)); copy.id = generateId('seq'); copy.title = seq.title + ' (Copy)'; t.sequences.unshift(copy); persist(); drawSeqList(); }
+          if (act === 'share') {
+            const link = location.origin + location.pathname + '#/portal?seq=' + seq.id + '&teacher=' + t.code;
+            copyToClipboard(link, e.currentTarget);
+            // Show QR via external image service (no JS libs)
+            const img = new Image();
+            img.alt = 'QR code for sequence link';
+            img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(link);
+            const host = e.currentTarget.closest('.seq-item');
+            const row = el(`<div class="row" style="margin-top:8px;"></div>`);
+            row.appendChild(img);
+            host.appendChild(row);
+          }
+          if (act === 'del') { if (confirm('Delete sequence?')) { t.sequences = t.sequences.filter(x => x.id !== seqId); persist(); drawSeqList(); drawSeqEditor(null); } }
+        }));
+      }
+      drawSeqList();
+
+      document.getElementById('new-seq').addEventListener('click', () => {
+        const ns = { id: generateId('seq'), title: 'Untitled', level: 'Beginner', tags: [], duration: 10, status: 'Draft', poses: [], breathNotes: '', mediaUrl: '' };
+        t.sequences.unshift(ns); persist(); drawSeqList(); drawSeqEditor(ns);
+      });
+
+      function drawSeqEditor(seq) {
+        const holder = document.getElementById('seq-editor');
+        if (!seq) { holder.innerHTML = ''; return; }
+        holder.innerHTML = `
+          <div class="space"></div>
+          <div class="card" aria-label="Sequence Editor">
+            <div class="row" style="justify-content:space-between; align-items:center;">
+              <strong>Edit: ${seq.title}</strong>
+              <div class="row">
+                <button class="btn sm success" id="pub">Publish</button>
+                <button class="btn sm warn" id="draft">Save Draft</button>
+              </div>
+            </div>
+            <div class="space"></div>
+            <div class="grid">
+              <div>
+                <label>Title</label>
+                <input id="seq-title" class="input" value="${seq.title}" />
+              </div>
+              <div class="row">
+                <div style="flex:1;">
+                  <label>Level</label>
+                  <select id="seq-level" class="input">
+                    ${['Beginner','Inter','Advanced'].map(l => `<option ${seq.level===l?'selected':''}>${l}</option>`).join('')}
+                  </select>
+                </div>
+                <div style="width:140px;">
+                  <label>Duration (min)</label>
+                  <input id="seq-duration" class="input" type="number" min="1" value="${seq.duration || 0}" />
+                </div>
+              </div>
+              <div>
+                <label>Tags (comma)</label>
+                <input id="seq-tags" class="input" value="${(seq.tags||[]).join(', ')}" />
+              </div>
+              <div>
+                <label>Breath Notes</label>
+                <textarea id="seq-breath" class="input" rows="3">${seq.breathNotes || ''}</textarea>
+              </div>
+              <div>
+                <label>Media URL (optional)</label>
+                <input id="seq-media" class="input" value="${seq.mediaUrl || ''}" />
+              </div>
+            </div>
+            <div class="space"></div>
+            <div class="row" style="justify-content:space-between; align-items:center;">
+              <strong>Poses</strong>
+              <button class="btn sm" id="add-pose">Add Pose</button>
+            </div>
+            <div id="pose-list" class="list" style="margin-top:8px;"></div>
+          </div>
+        `;
+        const title = document.getElementById('seq-title');
+        const level = document.getElementById('seq-level');
+        const duration = document.getElementById('seq-duration');
+        const tags = document.getElementById('seq-tags');
+        const breath = document.getElementById('seq-breath');
+        const media = document.getElementById('seq-media');
+        function bindSave() {
+          seq.title = title.value.trim() || 'Untitled';
+          seq.level = level.value;
+          seq.duration = parseInt(duration.value || '0', 10);
+          seq.tags = tags.value.split(',').map(s=>s.trim()).filter(Boolean);
+          seq.breathNotes = breath.value;
+          seq.mediaUrl = media.value;
+          persist();
+          drawSeqList();
+        }
+        ;[title, level, duration, tags, breath, media].forEach(n => n.addEventListener('input', bindSave));
+        document.getElementById('pub').addEventListener('click', () => { seq.status = 'Published'; persist(); drawSeqList(); });
+        document.getElementById('draft').addEventListener('click', () => { seq.status = 'Draft'; persist(); drawSeqList(); });
+
+        function drawPoses() {
+          const list = document.getElementById('pose-list');
+          if (!seq.poses) seq.poses = [];
+          list.innerHTML = seq.poses.map((p, idx) => `
+            <div class="pose-item" draggable="true" data-idx="${idx}" aria-grabbed="false">
+              <div class="drag-handle" role="button" aria-label="Drag to reorder" title="Drag">≡</div>
+              <div class="pose-fields">
+                <div class="pose-row">
+                  <input class="input" data-field="name" placeholder="Pose name" value="${p.name || ''}" />
+                  <input class="input" data-field="cues" placeholder="Cues" value="${p.cues || ''}" />
+                  <input class="input" data-field="hold" type="number" min="5" placeholder="Hold (sec)" value="${p.hold || 0}" />
+                </div>
+                <div class="pose-tools">
+                  <button class="btn sm ghost" data-kb="up" aria-label="Move up">▲</button>
+                  <button class="btn sm ghost" data-kb="down" aria-label="Move down">▼</button>
+                  <button class="btn sm danger" data-del>Remove</button>
+                </div>
+              </div>
+            </div>
+          `).join('');
+
+          // DnD
+          list.querySelectorAll('.pose-item').forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+              e.dataTransfer.setData('text/plain', item.getAttribute('data-idx'));
+              item.setAttribute('aria-grabbed','true');
+            });
+            item.addEventListener('dragend', () => item.setAttribute('aria-grabbed','false'));
+            item.addEventListener('dragover', (e) => e.preventDefault());
+            item.addEventListener('drop', (e) => {
+              e.preventDefault();
+              const from = parseInt(e.dataTransfer.getData('text/plain'), 10);
+              const to = parseInt(item.getAttribute('data-idx'), 10);
+              if (from === to) return;
+              const [moved] = seq.poses.splice(from, 1);
+              seq.poses.splice(to, 0, moved);
+              persist(); drawPoses();
+            });
+          });
+
+          // Fallback buttons + field binding
+          list.querySelectorAll('[data-kb]').forEach(btn => btn.addEventListener('click', (e) => {
+            const row = e.currentTarget.closest('.pose-item');
+            const idx = parseInt(row.getAttribute('data-idx'), 10);
+            const dir = e.currentTarget.getAttribute('data-kb');
+            const to = dir === 'up' ? Math.max(0, idx-1) : Math.min(seq.poses.length-1, idx+1);
+            const [moved] = seq.poses.splice(idx, 1);
+            seq.poses.splice(to, 0, moved);
+            persist(); drawPoses();
+          }));
+          list.querySelectorAll('[data-del]').forEach(btn => btn.addEventListener('click', (e) => {
+            const row = e.currentTarget.closest('.pose-item');
+            const idx = parseInt(row.getAttribute('data-idx'), 10);
+            seq.poses.splice(idx, 1); persist(); drawPoses();
+          }));
+          list.querySelectorAll('input[data-field]').forEach(inp => inp.addEventListener('input', (e) => {
+            const row = e.currentTarget.closest('.pose-item');
+            const idx = parseInt(row.getAttribute('data-idx'), 10);
+            const field = e.currentTarget.getAttribute('data-field');
+            let val = e.currentTarget.value;
+            if (field === 'hold') val = parseInt(val || '0', 10);
+            seq.poses[idx][field] = val; persist();
+          }));
+        }
+        drawPoses();
+
+        document.getElementById('add-pose').addEventListener('click', () => {
+          seq.poses.push({ name: '', cues: '', hold: 30 }); persist(); drawPoses();
+        });
+      }
+
+      // Programs
+      const progList = document.getElementById('prog-list');
+      const progSelect = document.getElementById('assign-prog');
+      function drawPrograms() {
+        progList.innerHTML = t.programs.map(p => `
+          <div class="card" data-prog="${p.id}">
+            <div class="row" style="justify-content:space-between;">
+              <strong>${p.title}</strong>
+              <div class="row">
+                <button class="btn sm ghost" data-act="edit">Edit</button>
+                <button class="btn sm danger" data-act="del">Delete</button>
+              </div>
+            </div>
+            <div class="small">${p.description || ''}</div>
+            <div class="space"></div>
+            <div class="list">
+              ${p.schedule.map(d => `<div class="row"><span class="chip">Day ${d.day}</span><span>${d.label}</span></div>`).join('')}
+            </div>
+          </div>
+        `).join('');
+        progList.querySelectorAll('[data-act]').forEach(btn => btn.addEventListener('click', (e) => {
+          const pid = e.currentTarget.closest('[data-prog]').getAttribute('data-prog');
+          const act = e.currentTarget.getAttribute('data-act');
+          const prog = t.programs.find(x => x.id === pid);
+          if (act === 'del') { if (confirm('Delete program?')) { t.programs = t.programs.filter(x => x.id !== pid); persist(); drawPrograms(); drawAssigns(); } }
+          if (act === 'edit') editProgram(prog);
+        }));
+        // fill select
+        progSelect.innerHTML = `<option value="">Select program</option>` + t.programs.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
+      }
+      function editProgram(p) {
+        const editor = el(`
+          <div class="card" style="margin-top:10px;">
+            <div class="row" style="justify-content:space-between;">
+              <strong>Edit Program</strong>
+              <button class="btn sm ghost" data-close>Close</button>
+            </div>
+            <div class="space"></div>
+            <div class="grid">
+              <input class="input" data-f="title" value="${p.title}" />
+              <textarea class="input" data-f="description" rows="2" placeholder="Description">${p.description || ''}</textarea>
+            </div>
+            <div class="space"></div>
+            <div class="list" id="sched"></div>
+            <div class="space"></div>
+            <div class="row">
+              <button class="btn sm" data-add-day>Add Day</button>
+            </div>
+          </div>
+        `);
+        progList.parentElement.insertBefore(editor, progList.nextSibling);
+        function drawSched() {
+          const wrap = editor.querySelector('#sched');
+          wrap.innerHTML = p.schedule.map((d, idx) => `
+            <div class="pose-item" data-idx="${idx}">
+              <div class="drag-handle">≡</div>
+              <div class="pose-fields">
+                <div class="pose-row">
+                  <input class="input" data-f="day" type="number" min="1" value="${d.day}" />
+                  <input class="input" data-f="label" value="${d.label}" />
+                  <select class="input" data-f="sequenceId">
+                    <option value="">No sequence</option>
+                    ${t.sequences.map(s => `<option value="${s.id}" ${s.id===d.sequenceId?'selected':''}>${s.title}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="pose-tools">
+                  <button class="btn sm ghost" data-kb="up">▲</button>
+                  <button class="btn sm ghost" data-kb="down">▼</button>
+                  <button class="btn sm danger" data-del>Remove</button>
+                </div>
+              </div>
+            </div>
+          `).join('');
+          wrap.querySelectorAll('[data-f]').forEach(inp => inp.addEventListener('input', (e) => {
+            const row = e.currentTarget.closest('[data-idx]');
+            const idx = parseInt(row.getAttribute('data-idx'), 10);
+            const f = e.currentTarget.getAttribute('data-f');
+            let val = e.currentTarget.value;
+            if (f === 'day') val = parseInt(val || '1', 10);
+            p.schedule[idx][f] = val || '';
+            persist();
+          }));
+          wrap.querySelectorAll('[data-kb]').forEach(btn => btn.addEventListener('click', (e) => {
+            const row = e.currentTarget.closest('[data-idx]');
+            const idx = parseInt(row.getAttribute('data-idx'), 10);
+            const dir = e.currentTarget.getAttribute('data-kb');
+            const to = dir === 'up' ? Math.max(0, idx-1) : Math.min(p.schedule.length-1, idx+1);
+            const [moved] = p.schedule.splice(idx, 1);
+            p.schedule.splice(to, 0, moved); persist(); drawSched();
+          }));
+          wrap.querySelectorAll('[data-del]').forEach(btn => btn.addEventListener('click', (e) => {
+            const row = e.currentTarget.closest('[data-idx]');
+            const idx = parseInt(row.getAttribute('data-idx'), 10);
+            p.schedule.splice(idx, 1); persist(); drawSched();
+          }));
+          // DnD
+          wrap.querySelectorAll('.pose-item').forEach(item => {
+            item.setAttribute('draggable','true');
+            item.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', item.getAttribute('data-idx')); });
+            item.addEventListener('dragover', (e) => e.preventDefault());
+            item.addEventListener('drop', (e) => {
+              e.preventDefault();
+              const from = parseInt(e.dataTransfer.getData('text/plain'), 10);
+              const to = parseInt(item.getAttribute('data-idx'), 10);
+              const [moved] = p.schedule.splice(from, 1);
+              p.schedule.splice(to, 0, moved); persist(); drawSched();
+            });
+          });
+        }
+        drawSched();
+        editor.querySelector('[data-add-day]').addEventListener('click', () => { p.schedule.push({ day: p.schedule.length+1, label: 'New Day', sequenceId: '' }); persist(); drawSched(); });
+        editor.querySelector('[data-close]').addEventListener('click', () => { editor.remove(); drawPrograms(); });
+        // Title/desc save
+        editor.querySelectorAll('[data-f]').forEach(inp => inp.addEventListener('input', (e) => {
+          p[e.currentTarget.getAttribute('data-f')] = e.currentTarget.value; persist(); drawPrograms();
+        }));
+      }
+      document.getElementById('prog-add').addEventListener('click', () => {
+        const title = document.getElementById('prog-title-input').value.trim();
+        if (!title) return;
+        const prog = { id: generateId('prog'), title, description: '', schedule: [] };
+        t.programs.unshift(prog); persist(); drawPrograms(); editProgram(prog);
+      });
+      drawPrograms();
+
+      // Assignments
+      function drawAssigns() {
+        const wrap = document.getElementById('assign-table');
+        if (t.assignments.length === 0) { wrap.innerHTML = `<div class="muted">No assignments yet.</div>`; return; }
+        wrap.innerHTML = t.assignments.map(a => {
+          const prog = t.programs.find(p => p.id === a.programId);
+          const due = a.dueAt ? new Date(a.dueAt).toLocaleDateString() : '';
+          return `<div class="row" style="justify-content:space-between;">
+            <span class="chip">${a.studentCode}</span>
+            <span>${prog?prog.title:'[deleted]'}</span>
+            <span class="small">Assigned ${new Date(a.assignedAt).toLocaleDateString()}${due?` • Due ${due}`:''}</span>
+          </div>`;
+        }).join('');
+      }
+      document.getElementById('assign-btn').addEventListener('click', () => {
+        const pid = /** @type {HTMLSelectElement} */(document.getElementById('assign-prog')).value;
+        if (!pid) return;
+        const codesRaw = /** @type {HTMLInputElement} */(document.getElementById('assign-codes')).value.trim();
+        const codes = codesRaw ? codesRaw.split(',').map(s=>s.trim().toUpperCase()).filter(Boolean) : ['ALL'];
+        const when = nowIso();
+        const dueInput = /** @type {HTMLInputElement} */(document.getElementById('assign-due'));
+        const dueAt = dueInput && dueInput.value ? new Date(dueInput.value + 'T23:59:59').toISOString() : null;
+        if (codes.includes('ALL')) {
+          if (t.students.length === 0) {
+            // Create a general student roster for demo
+            const code = generateCode(); t.students.push({ code, createdAt: when });
+          }
+          t.students.forEach(s => t.assignments.push({ studentCode: s.code, programId: pid, assignedAt: when, dueAt }));
+        } else {
+          codes.forEach(c => { if (!t.students.find(s => s.code === c)) t.students.push({ code: c, createdAt: when }); t.assignments.push({ studentCode: c, programId: pid, assignedAt: when, dueAt }); });
+        }
+        persist(); drawAssigns();
+      });
+      document.getElementById('invite-student').addEventListener('click', (e) => {
+        const code = generateCode();
+        t.students.push({ code, createdAt: nowIso() });
+        const link = location.origin + location.pathname + '#/join?code=' + t.code;
+        copyToClipboard(`${code} → ${link}`, e.currentTarget);
+        persist(); drawAssigns();
+      });
+      drawAssigns();
+
+      // Mantras
+      function drawMantras() {
+        const list = document.getElementById('mantra-list');
+        list.innerHTML = (t.mantras||[]).map(m => `
+          <div class="seq-item" data-m="${m.id}">
+            <div>
+              <div class="row" style="gap:8px;">
+                <strong>${m.title}</strong>
+                <span class="chip ${m.published?'pub':'draft'}">${m.published?'Published':'Unpublished'}</span>
+              </div>
+              <div class="small">${m.text} — ${m.meaning} • ${m.usage} • ${m.recitations}x</div>
+            </div>
+            <div class="seq-actions">
+              <button class="btn sm ghost" data-act="toggle">${m.published?'Unpublish':'Publish'}</button>
+              <button class="btn sm danger" data-act="del">Delete</button>
+            </div>
+          </div>
+        `).join('');
+        list.querySelectorAll('[data-act]').forEach(btn => btn.addEventListener('click', (e) => {
+          const id = e.currentTarget.closest('[data-m]').getAttribute('data-m');
+          const act = e.currentTarget.getAttribute('data-act');
+          const m = t.mantras.find(x => x.id === id);
+          if (act === 'toggle') { m.published = !m.published; persist(); drawMantras(); }
+          if (act === 'del') { t.mantras = t.mantras.filter(x => x.id !== id); persist(); drawMantras(); }
+        }));
+      }
+      document.getElementById('mantra-add').addEventListener('click', () => {
+        const title = document.getElementById('mantra-title-input').value.trim();
+        const text = document.getElementById('mantra-text-input').value.trim();
+        const meaning = document.getElementById('mantra-meaning-input').value.trim();
+        const usage = document.getElementById('mantra-usage-input').value.trim();
+        const recitations = parseInt(document.getElementById('mantra-recitations-input').value || '1', 10);
+        if (!title || !text) return;
+        t.mantras = t.mantras || [];
+        t.mantras.unshift({ id: generateId('m'), title, text, meaning, usage, recitations, published: false });
+        persist(); drawMantras();
+      });
+      drawMantras();
+
+      AppRoot.focus();
+    }
+
+    // Student Portal
+    function renderStudentPortal(query) {
+      // Resolve teacher from activeTeacherId or query teacher code
+      let t = App.activeTeacher;
+      if (!t && query.teacher) {
+        const byCode = teacherByCode(query.teacher);
+        if (byCode) { App.state.activeTeacherId = byCode.id; t = byCode; persist(); }
+      }
+      if (!t) { navigate('#/join'); return; }
+      setToolbarForTeacher(t);
+      const tabs = [];
+      if (t.modules.strengthasana) tabs.push('Assigned','Strengthāsana');
+      if (t.modules.mantras) tabs.push('Mantras');
+      if (t.modules.breathpacer) tabs.push('BreathPacer');
+      if (t.modules.pranayama) tabs.push('Paripūrṇa Prāṇa');
+      const activeTab = tabs[0] || '';
+      const logo = t.logoUrl ? `<img alt="${t.name} logo" src="${t.logoUrl}" style="width:56px;height:56px;object-fit:contain;border-radius:10px;" />` : '';
+
+      AppRoot.innerHTML = `
+        <section class="grid" aria-label="Student Portal">
+          <div class="card">
+            <div class="row" style="align-items:center; gap:12px;">
+              ${logo}
+              <div>
+                <div class="row" style="gap:8px; align-items:center;">
+                  <strong style="font-size:18px;">${t.name}</strong>
+                  <span class="chip" title="Teacher Code">${t.code}</span>
+                </div>
+                <div class="small">${t.welcome || ''}</div>
+              </div>
+            </div>
+          </div>
+          <div class="tabs" role="tablist">
+            ${tabs.map((tab, i) => `<button role="tab" class="tab" data-tab="${tab}" aria-selected="${i===0?'true':'false'}">${tab}</button>`).join('')}
+          </div>
+          <div id="tab-content"></div>
+        </section>
+      `;
+
+      function activate(tab) {
+        document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', b.getAttribute('data-tab') === tab ? 'true' : 'false'));
+        const host = document.getElementById('tab-content');
+        host.innerHTML = '';
+        if (tab === 'Assigned') drawAssigned(host, t);
+        if (tab === 'Strengthāsana') drawStrength(host, t, query);
+        if (tab === 'Mantras') drawMantrasStudent(host, t);
+        if (tab === 'BreathPacer') drawBreathPacer(host);
+        if (tab === 'Paripūrṇa Prāṇa') drawPranayama(host);
+      }
+      document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', (e) => activate(e.currentTarget.getAttribute('data-tab'))));
+      activate(activeTab);
+      AppRoot.focus();
+    }
+
+    function drawAssigned(host, t) {
+      const assignments = t.assignments;
+      if (assignments.length === 0) { host.appendChild(el(`<div class="card"><div class="muted">No assignments yet.</div></div>`)); return; }
+      host.appendChild(el(`<div class="card"><h3>Assigned Programs</h3></div>`));
+      assignments.forEach(a => {
+        const prog = t.programs.find(p => p.id === a.programId);
+        if (!prog) return;
+        const card = el(`<div class="card"></div>`);
+        card.innerHTML = `
+          <div class="row" style="justify-content:space-between;">
+            <strong>${prog.title}</strong>
+            <span class="small">Assigned ${new Date(a.assignedAt).toLocaleDateString()}</span>
+          </div>
+          <div class="small">${prog.description || ''}</div>
+          <div class="space"></div>
+          <div class="list">${prog.schedule.map((d, idx) => {
+            const doneKey = `done:${prog.id}:${d.day}`;
+            const done = localStorage.getItem(doneKey) === '1';
+            return `<div class="row" style="justify-content:space-between;">
+              <span><span class="chip">Day ${d.day}</span> ${d.label}</span>
+              <button class="btn sm ${done?'success':''}" data-done="${doneKey}">${done?'Completed':'Mark complete'}</button>
+            </div>`;
+          }).join('')}</div>
+        `;
+        card.querySelectorAll('[data-done]').forEach(btn => btn.addEventListener('click', (e) => {
+          const key = e.currentTarget.getAttribute('data-done');
+          const done = localStorage.getItem(key) === '1';
+          if (!done) localStorage.setItem(key, '1'); else localStorage.removeItem(key);
+          // analytics completion when sequenceId exists
+          const dayIdx = parseInt(key.split(':').pop(), 10) - 1;
+          const sched = prog.schedule[dayIdx];
+          if (sched?.sequenceId) t.analytics.completions.push({ studentCode: 'anon', sequenceId: sched.sequenceId, at: nowIso() });
+          persist(); drawAssigned(host, t);
+        }));
+        host.appendChild(card);
+      });
+    }
+
+    function drawStrength(host, t, query) {
+      const published = t.sequences.filter(s => (s.status || 'Draft') === 'Published');
+      const wrap = el(`<div class="grid"></div>`);
+      const list = el(`<div class="list"></div>`);
+      if (published.length === 0) list.innerHTML = `<div class="card"><div class="muted">No published sequences yet.</div></div>`;
+      published.forEach(s => {
+        const item = el(`<div class="seq-item" data-seq="${s.id}">
+          <div>
+            <strong>${s.title}</strong>
+            <div class="small">Level: ${s.level} • ${s.duration} min</div>
+          </div>
+          <div class="seq-actions">
+            <button class="btn sm" data-play>Open</button>
+          </div>
+        </div>`);
+        item.querySelector('[data-play]').addEventListener('click', () => openPlayer(s));
+        list.appendChild(item);
+      });
+      wrap.appendChild(list);
+      const playerHost = el(`<div id="player-host"></div>`);
+      wrap.appendChild(playerHost);
+      host.appendChild(wrap);
+      if (query.seq) {
+        const target = published.find(s => s.id === query.seq);
+        if (target) openPlayer(target);
+      }
+
+      function openPlayer(seq) {
+        playerHost.innerHTML = '';
+        const card = el(`<div class="card player"></div>`);
+        card.innerHTML = `
+          <div class="row" style="justify-content:space-between;">
+            <strong>${seq.title}</strong>
+            <button class="btn sm ghost" id="close-player">Close</button>
+          </div>
+          <div class="small">${seq.breathNotes || ''}</div>
+          <div id="pose-stage"></div>
+          <div class="row" style="justify-content:center; gap:8px;">
+            <button class="btn" id="play">Start</button>
+            <button class="btn ghost" id="pause">Pause</button>
+            <button class="btn ghost" id="next">Next</button>
+          </div>
+        `;
+        playerHost.appendChild(card);
+        document.getElementById('close-player').addEventListener('click', () => { playerHost.innerHTML=''; });
+        const stage = document.getElementById('pose-stage');
+        let idx = 0; let remaining = 0; let timer = null; let running = false;
+        function renderPose() {
+          const p = seq.poses[idx];
+          if (!p) { stage.innerHTML = '<div class="muted">Done</div>'; return; }
+          remaining = p.hold || 0;
+          stage.innerHTML = `
+            <div class="card">
+              <div class="row" style="justify-content:space-between;">
+                <strong>${p.name}</strong>
+                <span class="chip">${idx+1}/${seq.poses.length}</span>
+              </div>
+              <div class="muted">${p.cues || ''}</div>
+              <div class="timer" aria-live="polite" id="timer">${remaining}s</div>
+            </div>
+          `;
+        }
+        function tick() {
+          if (!running) return;
+          const tEl = document.getElementById('timer'); if (!tEl) return;
+          if (remaining <= 0) { nextPose(); return; }
+          remaining -= 1; tEl.textContent = remaining + 's';
+          timer = setTimeout(tick, 1000);
+        }
+        function start() { if (running) return; running = true; tick(); }
+        function pause() { running = false; if (timer) clearTimeout(timer); }
+        function nextPose() { pause(); idx = Math.min(seq.poses.length, idx + 1); renderPose(); start(); }
+        document.getElementById('play').addEventListener('click', start);
+        document.getElementById('pause').addEventListener('click', pause);
+        document.getElementById('next').addEventListener('click', nextPose);
+        renderPose();
+      }
+    }
+
+    function drawMantrasStudent(host, t) {
+      const list = el(`<div class="list"></div>`);
+      const mantras = (t.mantras||[]).filter(m => m.published);
+      if (mantras.length === 0) list.innerHTML = `<div class="card"><div class="muted">No mantras published.</div></div>`;
+      mantras.forEach(m => {
+        const card = el(`<div class="card" data-m="${m.id}"></div>`);
+        card.innerHTML = `
+          <div class="row" style="justify-content:space-between;">
+            <strong>${m.title}</strong>
+            <button class="btn sm" data-rec>Mark recited</button>
+          </div>
+          <div class="small">${m.text} — ${m.meaning} • ${m.usage}</div>
+        `;
+        card.querySelector('[data-rec]').addEventListener('click', () => {
+          const key = `rec:${t.id}:${m.id}`;
+          localStorage.setItem(key, nowIso());
+          card.querySelector('[data-rec]').textContent = 'Recited';
+        });
+        list.appendChild(card);
+      });
+      host.appendChild(list);
+    }
+
+    function drawBreathPacer(host) {
+      const card = el(`<div class="card"></div>`);
+      card.innerHTML = `
+        <h3>Breath Pacer</h3>
+        <div class="row" style="justify-content:center; gap:12px;">
+          <div id="circle" class="breath-circle" aria-label="Breathing circle"></div>
+        </div>
+        <div class="row" style="justify-content:center; gap:8px;">
+          <label class="sr-only" for="inhale">Inhale</label>
+          <input id="inhale" class="input" type="number" min="1" value="4" style="width:90px;" />
+          <label class="sr-only" for="hold">Hold</label>
+          <input id="hold" class="input" type="number" min="0" value="0" style="width:90px;" />
+          <label class="sr-only" for="exhale">Exhale</label>
+          <input id="exhale" class="input" type="number" min="1" value="6" style="width:90px;" />
+          <button id="bp-start" class="btn">Start</button>
+          <button id="bp-stop" class="btn ghost">Stop</button>
+        </div>
+      `;
+      host.appendChild(card);
+      const circle = card.querySelector('#circle');
+      let seq = []; let i = 0; let timeout = null; let running = false;
+      function step() {
+        if (!running) return; const cur = seq[i % seq.length];
+        if (cur.type === 'inhale') circle.style.transform = 'scale(1.2)';
+        if (cur.type === 'exhale') circle.style.transform = 'scale(0.9)';
+        if (cur.type === 'hold') circle.style.transform = 'scale(1.05)';
+        timeout = setTimeout(() => { i++; step(); }, cur.ms);
+      }
+      function start() {
+        const inh = Math.max(1, parseInt(card.querySelector('#inhale').value || '4', 10));
+        const h = Math.max(0, parseInt(card.querySelector('#hold').value || '0', 10));
+        const exh = Math.max(1, parseInt(card.querySelector('#exhale').value || '6', 10));
+        seq = [ { type: 'inhale', ms: inh*1000 }, ...(h? [{type:'hold', ms:h*1000}] : []), { type: 'exhale', ms: exh*1000 } ];
+        running = true; i = 0; step();
+      }
+      function stop() { running = false; if (timeout) clearTimeout(timeout); circle.style.transform = 'scale(1)'; }
+      card.querySelector('#bp-start').addEventListener('click', start);
+      card.querySelector('#bp-stop').addEventListener('click', stop);
+    }
+
+    function drawPranayama(host) {
+      const card = el(`<div class="card"></div>`);
+      card.innerHTML = `
+        <h3>Paripūrṇa Prāṇa</h3>
+        <div class="row" style="gap:8px;">
+          <button class="btn sm" data-pres="4-7-8">4-7-8</button>
+          <button class="btn sm" data-pres="box">Box 4-4-4-4</button>
+          <button class="btn sm" data-pres="6-2-6">6-2-6</button>
+        </div>
+        <div id="pp-host"></div>
+      `;
+      host.appendChild(card);
+      const ph = card.querySelector('#pp-host');
+      function renderPreset(name, inh, hold1, ex, hold2) {
+        ph.innerHTML = `<div class="small">Preset: ${name}</div>`;
+        drawBreathPacer(ph);
+        // Fill values
+        const inputMap = ph.querySelectorAll('input');
+        inputMap[0].value = inh; inputMap[1].value = hold1; inputMap[2].value = ex;
+      }
+      card.querySelectorAll('[data-pres]').forEach(btn => btn.addEventListener('click', (e) => {
+        const p = e.currentTarget.getAttribute('data-pres');
+        if (p === '4-7-8') renderPreset('4-7-8', 4, 7, 8, 0);
+        if (p === 'box') renderPreset('Box', 4, 4, 4, 4);
+        if (p === '6-2-6') renderPreset('6-2-6', 6, 2, 6, 0);
+      }));
+    }
+
+    // Kickoff
+    init();
+    render();
+  </script>
+</body>
+</html>
+
+
