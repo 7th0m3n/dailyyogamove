@@ -224,7 +224,6 @@
       </a>
       <nav class="nav-actions" aria-label="Primary">
         <a class="btn ghost nav-link" href="#/" role="button" aria-label="Home">Home</a>
-        <a class="btn ghost nav-link" href="#/portal?tab=BreathPacer" role="button" aria-label="Breath Pacer">BreathPacer</a>
         <a class="btn nav-link" href="#/teacher" role="button" aria-label="Teacher Portal">Teacher</a>
       </nav>
     </div>
@@ -505,6 +504,8 @@
           return renderLanding();
         case '#/postures':
           return renderPostures();
+        case '#/breathpacer':
+          return renderStudentPortal({ tab: 'BreathPacer' });
         case '#/mantras':
           return renderTraditionalMantras();
         case '#/mantra-generator':
@@ -586,10 +587,10 @@
               <div class="seq-item">
                 <div>
                   <strong>BreathPacer</strong>
-                  <div class="small">Timed inhale/hold/exhale visual pacer.</div>
+                  <div class="small">Follow guided pranayama rhythms to calm and balance your mind.</div>
                 </div>
                 <div class="seq-actions">
-                  <a class="btn sm" href="#/portal?tab=BreathPacer" aria-label="Open BreathPacer">Open</a>
+                  <a class="btn sm" href="#/breathpacer" aria-label="Open BreathPacer">Open</a>
                 </div>
               </div>
             </div>
