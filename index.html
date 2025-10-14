@@ -1572,20 +1572,151 @@
       }));
     }
 
-    // Postures data (can be replaced with external JSON later)
+    // Postures data (seed replaced by user's provided dataset)
     const POSES = [
-      { english:'Mountain Pose', sanskrit:'ताड़ासन', transliteration:'Tāḍāsana', level:'Beginner', category:'standing', tags:['foundation'], image:'', notes:'Feet hip-width, thighs engage, tailbone neutral.' },
-      { english:'Downward-Facing Dog', sanskrit:'अधो मुख श्वानासन', transliteration:'Adho Mukha Śvānāsana', level:'Beginner', category:'inversion', tags:['hamstrings','shoulders'], image:'', notes:'Hands shoulder-width, sit bones lift, heels descend.' },
-      { english:'Cobra', sanskrit:'भुजङ्गासन', transliteration:'Bhujangāsana', level:'Beginner', category:'backbend', tags:['spine'], image:'', notes:'Press tops of feet, lift chest, shoulders away from ears.' },
-      { english:'Warrior II', sanskrit:'वीरभद्रासन II', transliteration:'Vīrabhadrāsana II', level:'Intermediate', category:'standing', tags:['legs','focus'], image:'', notes:'Front knee tracks toes, back leg firm, gaze over front hand.' },
-      { english:'Triangle', sanskrit:'त्रिकोणासन', transliteration:'Trikoṇāsana', level:'Intermediate', category:'standing', tags:['side-body','hamstrings'], image:'', notes:'Hinge at hip, spin ribs open, lengthen both sides.' },
-      { english:'Bridge', sanskrit:'सेतु बन्धासन', transliteration:'Setu Bandhāsana', level:'Beginner', category:'backbend', tags:['glutes','chest'], image:'', notes:'Root through feet, lift hips, interlace hands under back.' },
-      { english:'Seated Forward Fold', sanskrit:'पश्चिमोत्तानासन', transliteration:'Paścimottānāsana', level:'Intermediate', category:'forward bend', tags:['hamstrings','calm'], image:'', notes:'Lengthen spine, hinge at hips, soften knees if needed.' },
-      { english:'Revolved Chair', sanskrit:'परिवृत्त उत्कटासन', transliteration:'Parivrtta Utkatāsana', level:'Intermediate', category:'twist', tags:['detox','legs'], image:'', notes:'Knees track, lengthen, then twist from thoracic spine.' },
-      { english:'Crow Pose', sanskrit:'बकासन', transliteration:'Bakāsana', level:'Advanced', category:'arm balance', tags:['core','balance'], image:'', notes:'Gaze forward, hug knees to arms, shift weight into hands.' },
-      { english:'Pigeon', sanskrit:'एक पाद राजकपोतासन (prep)', transliteration:'Eka Pāda Rāja Kapotāsana (prep)', level:'Intermediate', category:'hip opener', tags:['hips','release'], image:'', notes:'Square hips, support with props, keep spine long.' },
-      { english:'Headstand (prep)', sanskrit:'शीर्षासन (prep)', transliteration:'Śīrṣāsana (prep)', level:'Advanced', category:'inversion', tags:['core','inversion'], image:'', notes:'Use wall, interlace fingers, keep shoulders strong.' },
-      { english:'Savasana', sanskrit:'शवासन', transliteration:'Śavāsana', level:'Beginner', category:'closing', tags:['rest','integration'], image:'', notes:'Support under knees if low back sensitive, eyes soft.' }
+      {"english":"Sun Salutation A","sanskrit":"सूर्य नमस्कार A","transliteration":"Sūrya Namaskāra A","level":"Beginner","category":"Transition","tags":["vinyasa","warmup"],"image":"","notes":""},
+      {"english":"Sun Salutation B","sanskrit":"सूर्य नमस्कार B","transliteration":"Sūrya Namaskāra B","level":"Beginner","category":"Transition","tags":["vinyasa","warmup"],"image":"","notes":""},
+      {"english":"Big Toe Pose","sanskrit":"पादाङ्गुष्ठासन","transliteration":"Pādaṅguṣṭhāsana","level":"Beginner","category":"Standing","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Hand to Foot Pose","sanskrit":"पादहस्तासन","transliteration":"Pāda Hastāsana","level":"Beginner","category":"Standing","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Extended Triangle Pose","sanskrit":"उत्त्थित त्रिकोणासन","transliteration":"Utthita Trikoṇāsana","level":"Beginner","category":"Standing","tags":["lateral"],"image":"","notes":""},
+      {"english":"Revolved Triangle Pose","sanskrit":"परिवृत्त त्रिकोणासन","transliteration":"Parivṛtta Trikoṇāsana","level":"Intermediate","category":"Standing","tags":["twist"],"image":"","notes":""},
+      {"english":"Extended Side Angle Pose","sanskrit":"उत्त्थित पार्श्वकोणासन","transliteration":"Utthita Pārśvakoṇāsana","level":"Beginner","category":"Standing","tags":["lateral"],"image":"","notes":""},
+      {"english":"Revolved Side Angle Pose","sanskrit":"परिवृत्त पार्श्वकोणासन","transliteration":"Parivṛtta Pārśvakoṇāsana","level":"Intermediate","category":"Standing","tags":["twist"],"image":"","notes":""},
+      {"english":"Wide-Legged Forward Fold A","sanskrit":"प्रसारित पादोत्तानासन A","transliteration":"Prasārita Padottānāsana A","level":"Beginner","category":"Standing","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Wide-Legged Forward Fold B","sanskrit":"प्रसारित पादोत्तानासन B","transliteration":"Prasārita Padottānāsana B","level":"Beginner","category":"Standing","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Wide-Legged Forward Fold C","sanskrit":"प्रसारित पादोत्तानासन C","transliteration":"Prasārita Padottānāsana C","level":"Beginner","category":"Standing","tags":["shoulders"],"image":"","notes":""},
+      {"english":"Wide-Legged Forward Fold D","sanskrit":"प्रसारित पादोत्तानासन D","transliteration":"Prasārita Padottānāsana D","level":"Beginner","category":"Standing","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Intense Side Stretch","sanskrit":"पार्श्वोत्तानासन","transliteration":"Pārśvottānāsana","level":"Intermediate","category":"Standing","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Extended Hand-to-Big-Toe","sanskrit":"उत्त्थित हस्त पादाङ्गुष्ठासन","transliteration":"Utthita Hasta Pādāṅguṣṭhāsana","level":"Intermediate","category":"Standing","tags":["balance"],"image":"","notes":""},
+      {"english":"Half Bound Lotus Standing Fold","sanskrit":"अर्ध बद्ध पद्मोत्तानासन","transliteration":"Ardha Baddha Padmottānāsana","level":"Intermediate","category":"Standing","tags":["balance","hip"],"image":"","notes":""},
+      {"english":"Chair Pose","sanskrit":"उत्कटासन","transliteration":"Utkatāsana","level":"Beginner","category":"Standing","tags":["legs"],"image":"","notes":""},
+      {"english":"Warrior I","sanskrit":"वीरभद्रासन A","transliteration":"Vīrabhadrāsana A","level":"Beginner","category":"Standing","tags":["legs","hip"],"image":"","notes":""},
+      {"english":"Warrior II","sanskrit":"वीरभद्रासन B","transliteration":"Vīrabhadrāsana B","level":"Beginner","category":"Standing","tags":["legs"],"image":"","notes":""},
+      {"english":"Staff Pose","sanskrit":"दण्डासन","transliteration":"Daṇḍāsana","level":"Beginner","category":"Seated","tags":["foundation"],"image":"","notes":""},
+      {"english":"Seated Forward Fold A","sanskrit":"पश्चिमोत्तानासन A","transliteration":"Paścimottānāsana A","level":"Beginner","category":"Forward Bend","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Seated Forward Fold B","sanskrit":"पश्चिमोत्तानासन B","transliteration":"Paścimottānāsana B","level":"Beginner","category":"Forward Bend","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Seated Forward Fold C","sanskrit":"पश्चिमोत्तानासन C","transliteration":"Paścimottānāsana C","level":"Beginner","category":"Forward Bend","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Upward Plank Pose","sanskrit":"पूर्वोत्तानासन","transliteration":"Pūrvottānāsana","level":"Intermediate","category":"Backbend","tags":["shoulders","front-body"],"image":"","notes":""},
+      {"english":"Half Bound Lotus Seated Fold","sanskrit":"अर्ध बद्ध पद्म पश्चिमोत्तानासन","transliteration":"Ardha Baddha Padma Paścimottānāsana","level":"Intermediate","category":"Forward Bend","tags":["hip"],"image":"","notes":""},
+      {"english":"Three-Limbed Seated Forward Fold","sanskrit":"त्र्यङ्ग मुख एक पाद पश्चिमोत्तानासन","transliteration":"Triāṅga Mukha Eka Pāda Paścimottānāsana","level":"Beginner","category":"Forward Bend","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Head-to-Knee A","sanskrit":"जानु शीर्षासन A","transliteration":"Jānu Śīrṣāsana A","level":"Beginner","category":"Forward Bend","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Head-to-Knee B","sanskrit":"जानु शीर्षासन B","transliteration":"Jānu Śīrṣāsana B","level":"Intermediate","category":"Forward Bend","tags":[],"image":"","notes":""},
+      {"english":"Head-to-Knee C","sanskrit":"जानु शीर्षासन C","transliteration":"Jānu Śīrṣāsana C","level":"Intermediate","category":"Forward Bend","tags":[],"image":"","notes":""},
+      {"english":"Marichi’s Pose A","sanskrit":"मारीच्यासन A","transliteration":"Marīcyāsana A","level":"Intermediate","category":"Seated","tags":["twist","bind"],"image":"","notes":""},
+      {"english":"Marichi’s Pose B","sanskrit":"मारीच्यासन B","transliteration":"Marīcyāsana B","level":"Intermediate","category":"Seated","tags":["bind","lotus"],"image":"","notes":""},
+      {"english":"Marichi’s Pose C","sanskrit":"मारीच्यासन C","transliteration":"Marīcyāsana C","level":"Intermediate","category":"Seated","tags":["twist"],"image":"","notes":""},
+      {"english":"Marichi’s Pose D","sanskrit":"मारीच्यासन D","transliteration":"Marīcyāsana D","level":"Advanced","category":"Seated","tags":["twist","bind","lotus"],"image":"","notes":""},
+      {"english":"Boat Pose","sanskrit":"नावासन","transliteration":"Nāvāsana","level":"Beginner","category":"Core","tags":["core"],"image":"","notes":""},
+      {"english":"Shoulder-Pressing Pose","sanskrit":"भुजपीडासन","transliteration":"Bhujapīḍāsana","level":"Intermediate","category":"Arm Balance","tags":["arm-balance"],"image":"","notes":""},
+      {"english":"Tortoise Pose","sanskrit":"कूर्मासन","transliteration":"Kūrmāsana","level":"Intermediate","category":"Forward Bend","tags":["hip","fold"],"image":"","notes":""},
+      {"english":"Sleeping Tortoise","sanskrit":"सुप्त कूर्मासन","transliteration":"Supta Kūrmāsana","level":"Advanced","category":"Forward Bend","tags":["hip","fold"],"image":"","notes":""},
+      {"english":"Embryo Pose","sanskrit":"गर्भ पिण्डासन","transliteration":"Garbha Piṇḍāsana","level":"Intermediate","category":"Arm Balance","tags":["bind","balance"],"image":"","notes":""},
+      {"english":"Rooster Pose","sanskrit":"कुक्कुटासन","transliteration":"Kukkuṭāsana","level":"Intermediate","category":"Arm Balance","tags":["lotus","arm-balance"],"image":"","notes":""},
+      {"english":"Bound Angle Pose","sanskrit":"बद्ध कोणासन","transliteration":"Baddha Koṇāsana","level":"Beginner","category":"Hip Opener","tags":["hip"],"image":"","notes":""},
+      {"english":"Wide-Angle Seated Fold A","sanskrit":"उपविष्ट कोणासन A","transliteration":"Upaviṣṭha Koṇāsana A","level":"Beginner","category":"Forward Bend","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Wide-Angle Seated Fold B","sanskrit":"उपविष्ट कोणासन B","transliteration":"Upaviṣṭha Koṇāsana B","level":"Beginner","category":"Forward Bend","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Supine Angle Pose","sanskrit":"सुप्त कोणासन","transliteration":"Supta Koṇāsana","level":"Intermediate","category":"Inversion","tags":["core"],"image":"","notes":""},
+      {"english":"Supine Hand-to-Big-Toe","sanskrit":"सुप्त पादाङ्गुष्ठासन","transliteration":"Supta Pādāṅguṣṭhāsana","level":"Beginner","category":"Supine","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Both Big Toes Pose","sanskrit":"उभय पादाङ्गुष्ठासन","transliteration":"Ubhaya Pādāṅguṣṭhāsana","level":"Intermediate","category":"Core","tags":["balance"],"image":"","notes":""},
+      {"english":"Up-Face Intense Stretch","sanskrit":"ऊर्ध्वमुख पश्चिमोत्तानासन","transliteration":"Ūrdhva Mukha Paścimottānāsana","level":"Intermediate","category":"Core","tags":["balance","fold"],"image":"","notes":""},
+      {"english":"Bridge Lock Pose","sanskrit":"सेतुबन्ध सर्वाङ्गासन","transliteration":"Setu Bandha Sarvāṅgāsana","level":"Advanced","category":"Backbend","tags":["backbend"],"image":"","notes":""},
+      {"english":"Upward Bow (Wheel)","sanskrit":"ऊर्ध्व धनुरासन","transliteration":"Ūrdhva Dhanurāsana","level":"Intermediate","category":"Backbend","tags":["backbend"],"image":"","notes":""},
+      {"english":"Supported Shoulderstand","sanskrit":"सालम्ब सर्वाङ्गासन","transliteration":"Sālamba Sarvāṅgāsana","level":"Beginner","category":"Inversion","tags":["inversion"],"image":"","notes":""},
+      {"english":"Plow Pose","sanskrit":"हलासन","transliteration":"Halāsana","level":"Beginner","category":"Inversion","tags":["inversion"],"image":"","notes":""},
+      {"english":"Ear Pressure Pose","sanskrit":"कर्णपीडासन","transliteration":"Karṇapīḍāsana","level":"Intermediate","category":"Inversion","tags":["inversion"],"image":"","notes":""},
+      {"english":"Fish Pose","sanskrit":"मत्स्यासन","transliteration":"Matsyāsana","level":"Beginner","category":"Backbend","tags":["chest"],"image":"","notes":""},
+      {"english":"Extended Legs Pose","sanskrit":"उत्तान पादासन","transliteration":"Uttāna Pādāsana","level":"Beginner","category":"Core","tags":["core"],"image":"","notes":""},
+      {"english":"Bound Lotus","sanskrit":"बद्ध पद्मासन","transliteration":"Baddha Padmāsana","level":"Intermediate","category":"Seated","tags":["lotus"],"image":"","notes":""},
+      {"english":"Yoga Seal","sanskrit":"योग मुद्रा","transliteration":"Yoga Mudrā","level":"Intermediate","category":"Seated","tags":["mudra"],"image":"","notes":""},
+      {"english":"Lotus Pose","sanskrit":"पद्मासन","transliteration":"Padmāsana","level":"Intermediate","category":"Seated","tags":["lotus"],"image":"","notes":""},
+      {"english":"Corpse Pose","sanskrit":"शवासन","transliteration":"Śavāsana","level":"Beginner","category":"Closing","tags":["relaxation"],"image":"","notes":""},
+      {"english":"Noose Pose","sanskrit":"पाशासन","transliteration":"Pāśāsana","level":"Intermediate","category":"Twist","tags":["bind","squat"],"image":"","notes":""},
+      {"english":"Heron Pose","sanskrit":"क्रौञ्चासन","transliteration":"Krauñchāsana","level":"Intermediate","category":"Seated","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Locust Pose","sanskrit":"शलभासन","transliteration":"Śalabhāsana","level":"Beginner","category":"Backbend","tags":["back"],"image":"","notes":""},
+      {"english":"Frog Pose","sanskrit":"भेकासन","transliteration":"Bhekāsana","level":"Intermediate","category":"Backbend","tags":["quads","chest"],"image":"","notes":""},
+      {"english":"Bow Pose","sanskrit":"धनुरासन","transliteration":"Dhanurāsana","level":"Beginner","category":"Backbend","tags":["back"],"image":"","notes":""},
+      {"english":"Gate Pose","sanskrit":"परिघासन","transliteration":"Parighāsana","level":"Beginner","category":"Kneeling","tags":["lateral"],"image":"","notes":""},
+      {"english":"Camel Pose","sanskrit":"उष्ट्रासन","transliteration":"Uṣṭrāsana","level":"Beginner","category":"Backbend","tags":["chest","hip"],"image":"","notes":""},
+      {"english":"Little Thunderbolt","sanskrit":"लघु वज्रासन","transliteration":"Laghu Vajrāsana","level":"Advanced","category":"Backbend","tags":["backbend"],"image":"","notes":""},
+      {"english":"Pigeon (Deep Backbend)","sanskrit":"कपोतासन","transliteration":"Kapotāsana","level":"Advanced","category":"Backbend","tags":["deep-backbend"],"image":"","notes":""},
+      {"english":"Reclined Thunderbolt","sanskrit":"सुप्त वज्रासन","transliteration":"Supta Vajrāsana","level":"Intermediate","category":"Backbend","tags":["backbend"],"image":"","notes":""},
+      {"english":"One-Leg Behind Head","sanskrit":"एक पाद शीर्षासन","transliteration":"Eka Pāda Śīrṣāsana","level":"Advanced","category":"Hip Opener","tags":["behind-head"],"image":"","notes":""},
+      {"english":"Both-Legs Behind Head","sanskrit":"द्विपाद शीर्षासन","transliteration":"Dvipāda Śīrṣāsana","level":"Advanced","category":"Hip Opener","tags":["behind-head"],"image":"","notes":""},
+      {"english":"Yogic Sleep Pose","sanskrit":"योग निद्रासन","transliteration":"Yoga Nidrāsana","level":"Advanced","category":"Hip Opener","tags":["behind-head"],"image":"","notes":""},
+      {"english":"Firefly Pose","sanskrit":"टिट्टिभासन","transliteration":"Tittibhāsana","level":"Intermediate","category":"Arm Balance","tags":["arm-balance"],"image":"","notes":""},
+      {"english":"Forearm Stand","sanskrit":"पिञ्च मयूरासन","transliteration":"Piñcha Mayūrāsana","level":"Intermediate","category":"Inversion","tags":["inversion","balance"],"image":"","notes":""},
+      {"english":"Karandavasana","sanskrit":"करण्डवासन","transliteration":"Karaṇḍavāsana","level":"Advanced","category":"Inversion","tags":["strength"],"image":"","notes":""},
+      {"english":"Peacock Pose","sanskrit":"मयूरासन","transliteration":"Mayūrāsana","level":"Advanced","category":"Arm Balance","tags":["arm-balance","strength"],"image":"","notes":""},
+      {"english":"Crocodile Jumps","sanskrit":"नक्रासन","transliteration":"Nakrasana","level":"Advanced","category":"Arm Balance","tags":["dynamic"],"image":"","notes":""},
+      {"english":"Vatayanasana","sanskrit":"वातयानासन","transliteration":"Vātayānāsana","level":"Intermediate","category":"Seated","tags":["hip","twist"],"image":"","notes":""},
+      {"english":"Gomukhasana","sanskrit":"गोमुखासन","transliteration":"Gomukhāsana","level":"Intermediate","category":"Seated","tags":["shoulders","hips"],"image":"","notes":""},
+      {"english":"Side Plank Pose","sanskrit":"वसिष्ठासन","transliteration":"Vasiṣṭhāsana","level":"Intermediate","category":"Arm Balance","tags":["balance","strength"],"image":"","notes":""},
+      {"english":"Sage Viśvāmitra Pose","sanskrit":"विश्वामित्रासन","transliteration":"Viśvāmitrāsana","level":"Advanced","category":"Arm Balance","tags":["hamstrings","twist"],"image":"","notes":""},
+      {"english":"Sage Kaśyapa Pose","sanskrit":"कश्यपासन","transliteration":"Kaśyapāsana","level":"Advanced","category":"Arm Balance","tags":["twist","bind"],"image":"","notes":""},
+      {"english":"Cakorāsana","sanskrit":"चकौरासन","transliteration":"Cakorāsana","level":"Advanced","category":"Arm Balance","tags":[],"image":"","notes":""},
+      {"english":"Bhairavāsana","sanskrit":"भैरवासन","transliteration":"Bhairavāsana","level":"Advanced","category":"Arm Balance","tags":[],"image":"","notes":""},
+      {"english":"Skandāsana (advanced variant)","sanskrit":"स्कन्दासन","transliteration":"Skandāsana","level":"Advanced","category":"Arm Balance","tags":[],"image":"","notes":""},
+      {"english":"Durvāsana","sanskrit":"दुर्वासन","transliteration":"Durvāsana","level":"Advanced","category":"Arm Balance","tags":["leg-behind-head"],"image":"","notes":""},
+      {"english":"Upward Rooster A","sanskrit":"ऊर्ध्व कुक्कुटासन A","transliteration":"Ūrdhva Kukkuṭāsana A","level":"Advanced","category":"Arm Balance","tags":[],"image":"","notes":""},
+      {"english":"Upward Rooster B","sanskrit":"ऊर्ध्व कुक्कुटासन B","transliteration":"Ūrdhva Kukkuṭāsana B","level":"Advanced","category":"Arm Balance","tags":[],"image":"","notes":""},
+      {"english":"Upward Rooster C","sanskrit":"ऊर्ध्व कुक्कुटासन C","transliteration":"Ūrdhva Kukkuṭāsana C","level":"Advanced","category":"Arm Balance","tags":[],"image":"","notes":""},
+      {"english":"Flying Pigeon Pose","sanskrit":"गलवासन","transliteration":"Gālavāsana","level":"Advanced","category":"Arm Balance","tags":["hip","balance"],"image":"","notes":""},
+      {"english":"One-Legged Crane A","sanskrit":"एक पाद बकासन A","transliteration":"Eka Pāda Bakāsana A","level":"Advanced","category":"Arm Balance","tags":["arm-balance"],"image":"","notes":""},
+      {"english":"One-Legged Crane B","sanskrit":"एक पाद बकासन B","transliteration":"Eka Pāda Bakāsana B","level":"Advanced","category":"Arm Balance","tags":["arm-balance"],"image":"","notes":""},
+      {"english":"Sage Koundinya A","sanskrit":"कौण्डिन्यासन A","transliteration":"Kauṇḍinyāsana A","level":"Advanced","category":"Arm Balance","tags":["arm-balance"],"image":"","notes":""},
+      {"english":"Sage Koundinya B","sanskrit":"कौण्डिन्यासन B","transliteration":"Kauṇḍinyāsana B","level":"Advanced","category":"Arm Balance","tags":["arm-balance"],"image":"","notes":""},
+      {"english":"Eight-Angle Pose","sanskrit":"अष्टावक्रासन","transliteration":"Aṣṭāvakrāsana","level":"Advanced","category":"Arm Balance","tags":["arm-balance"],"image":"","notes":""},
+      {"english":"Full Lord of the Fishes","sanskrit":"पूर्ण मत्स्येन्द्रासन","transliteration":"Pūrṇa Matsyendrāsana","level":"Advanced","category":"Twist","tags":["deep-twist"],"image":"","notes":""},
+      {"english":"Virāñchi’s Pose A1","sanskrit":"वीराञ्च्यासन A1","transliteration":"Vīrāñchyāsana A1","level":"Advanced","category":"Seated","tags":[],"image":"","notes":""},
+      {"english":"Virāñchi’s Pose A2","sanskrit":"वीराञ्च्यासन A2","transliteration":"Vīrāñchyāsana A2","level":"Advanced","category":"Seated","tags":[],"image":"","notes":""},
+      {"english":"Virāñchi’s Pose A3","sanskrit":"वीराञ्च्यासन A3","transliteration":"Vīrāñchyāsana A3","level":"Advanced","category":"Seated","tags":[],"image":"","notes":""},
+      {"english":"Virāñchi’s Pose B1","sanskrit":"वीराञ्च्यासन B1","transliteration":"Vīrāñchyāsana B1","level":"Advanced","category":"Seated","tags":[],"image":"","notes":""},
+      {"english":"Virāñchi’s Pose B2","sanskrit":"वीराञ्च्यासन B2","transliteration":"Vīrāñchyāsana B2","level":"Advanced","category":"Seated","tags":[],"image":"","notes":""},
+      {"english":"Virāñchi’s Pose B3","sanskrit":"वीराञ्च्यासन B3","transliteration":"Vīrāñchyāsana B3","level":"Advanced","category":"Seated","tags":[],"image":"","notes":""},
+      {"english":"Two-Legged Inverted Staff","sanskrit":"द्विपाद विपरीत दण्डासन","transliteration":"Dvīpāda Viparīta Daṇḍāsana","level":"Advanced","category":"Backbend","tags":["inversion","backbend"],"image":"","notes":""},
+      {"english":"One-Legged Inverted Staff","sanskrit":"एक पाद विपरीत दण्डासन","transliteration":"Eka Pāda Viparīta Daṇḍāsana","level":"Advanced","category":"Backbend","tags":["inversion","backbend"],"image":"","notes":""},
+      {"english":"Inverted Locust","sanskrit":"विपरीत शलभासन","transliteration":"Viparīta Śalabhāsana","level":"Advanced","category":"Backbend","tags":["backbend"],"image":"","notes":""},
+      {"english":"Formidable Face Pose","sanskrit":"गण्ड भेरुण्डासन","transliteration":"Gaṇḍa Bheruṇḍāsana","level":"Advanced","category":"Backbend","tags":["deep-backbend"],"image":"","notes":""},
+      {"english":"Hanuman Splits A","sanskrit":"हनुमानासन A","transliteration":"Hanumānāsana A","level":"Advanced","category":"Hip Opener","tags":["splits"],"image":"","notes":""},
+      {"english":"Hanuman Splits B","sanskrit":"हनुमानासन B","transliteration":"Hanumānāsana B","level":"Advanced","category":"Hip Opener","tags":["splits"],"image":"","notes":""},
+      {"english":"Reclined Overhead Splits","sanskrit":"सुप्त त्रिविक्रमासन","transliteration":"Supta Trivikramāsana","level":"Advanced","category":"Hip Opener","tags":[],"image":"","notes":""},
+      {"english":"Dīkāsana A","sanskrit":"दीकासन A","transliteration":"Dīkāsana A","level":"Advanced","category":"Standing","tags":[],"image":"","notes":""},
+      {"english":"Dīkāsana B","sanskrit":"दीकासन B","transliteration":"Dīkāsana B","level":"Advanced","category":"Standing","tags":[],"image":"","notes":""},
+      {"english":"Standing Trivikrama","sanskrit":"उत्त्थित त्रिविक्रमासन","transliteration":"Utthita Trivikramāsana","level":"Advanced","category":"Standing","tags":[],"image":"","notes":""},
+      {"english":"Dancer Pose","sanskrit":"नटराजासन","transliteration":"Naṭarājāsana","level":"Advanced","category":"Backbend","tags":["balance"],"image":"","notes":""},
+      {"english":"King Pigeon","sanskrit":"राज कपोतासन","transliteration":"Rāja Kapotāsana","level":"Advanced","category":"Backbend","tags":["deep-backbend"],"image":"","notes":""},
+      {"english":"One-Legged King Pigeon","sanskrit":"एक पाद राज कपोतासन","transliteration":"Eka Pāda Rāja Kapotāsana","level":"Advanced","category":"Backbend","tags":["deep-backbend"],"image":"","notes":""},
+      {"english":"Mulabandhasana","sanskrit":"मूलबन्धासन","transliteration":"Mulabandhāsana","level":"Advanced","category":"Seated","tags":[],"image":"","notes":""},
+      {"english":"Nahusha Pose A","sanskrit":"नहुषासन A","transliteration":"Nahūṣāsana A","level":"Advanced","category":"Arm Balance","tags":[],"image":"","notes":""},
+      {"english":"Nahusha Pose B","sanskrit":"नहुषासन B","transliteration":"Nahūṣāsana B","level":"Advanced","category":"Arm Balance","tags":[],"image":"","notes":""},
+      {"english":"Nahusha Pose C","sanskrit":"नहुषासन C","transliteration":"Nahūṣāsana C","level":"Advanced","category":"Arm Balance","tags":[],"image":"","notes":""},
+      {"english":"Scorpion Pose","sanskrit":"वृश्चिकासन","transliteration":"Vṛścikāsana","level":"Advanced","category":"Inversion","tags":["backbend","inversion"],"image":"","notes":""},
+      {"english":"Reclining Pose","sanskrit":"शयनासन","transliteration":"Śayanāsana","level":"Advanced","category":"Backbend","tags":[],"image":"","notes":""},
+      {"english":"Buddha Pose","sanskrit":"बुद्धासन","transliteration":"Buddhāsana","level":"Advanced","category":"Seated","tags":[],"image":"","notes":""},
+      {"english":"Kapila’s Pose","sanskrit":"कपिलासन","transliteration":"Kapilāsana","level":"Advanced","category":"Seated","tags":[],"image":"","notes":""},
+      {"english":"Archer Pose A","sanskrit":"आकर्ण धनुरासन A","transliteration":"Ākarṇa Dhanurāsana A","level":"Advanced","category":"Seated","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Archer Pose B","sanskrit":"आकर्ण धनुरासन B","transliteration":"Ākarṇa Dhanurāsana B","level":"Advanced","category":"Seated","tags":["hamstrings"],"image":"","notes":""},
+      {"english":"Big-Toe Bow A","sanskrit":"पादाङ्गुष्ठ धनुरासन A","transliteration":"Pādaṅguṣṭha Dhanurāsana A","level":"Advanced","category":"Backbend","tags":[],"image":"","notes":""},
+      {"english":"Big-Toe Bow B","sanskrit":"पादाङ्गुष्ठ धनुरासन B","transliteration":"Pādaṅguṣṭha Dhanurāsana B","level":"Advanced","category":"Backbend","tags":[],"image":"","notes":""},
+      {"english":"Marichi’s Pose E","sanskrit":"मारीच्यासन E","transliteration":"Marīcyāsana E","level":"Advanced","category":"Seated","tags":["bind"],"image":"","notes":""},
+      {"english":"Marichi’s Pose F","sanskrit":"मारीच्यासन F","transliteration":"Marīcyāsana F","level":"Advanced","category":"Seated","tags":["bind"],"image":"","notes":""},
+      {"english":"Marichi’s Pose G","sanskrit":"मारीच्यासन G","transliteration":"Marīcyāsana G","level":"Advanced","category":"Seated","tags":["bind"],"image":"","notes":""},
+      {"english":"Marichi’s Pose H","sanskrit":"मारीच्यासन H","transliteration":"Marīcyāsana H","level":"Advanced","category":"Seated","tags":["bind"],"image":"","notes":""},
+      {"english":"Mountain (context)","sanskrit":"ताडासन","transliteration":"Tāḍāsana","level":"Beginner","category":"Standing","tags":[],"image":"","notes":""},
+      {"english":"Samanasana","sanskrit":"समानासन","transliteration":"Samānāsana","level":"Advanced","category":"Seated","tags":[],"image":"","notes":""},
+      {"english":"Side Crane Pose","sanskrit":"पार्श्व बकासन","transliteration":"Pārśva Bakāsana","level":"Advanced","category":"Arm Balance","tags":["arm-balance"],"image":"","notes":""},
+      {"english":"One-Legged Rooster","sanskrit":"पुङ्ग कुक्कुटासन","transliteration":"Puṅga Kukkuṭāsana","level":"Advanced","category":"Arm Balance","tags":[],"image":"","notes":""},
+      {"english":"One-Legged Bow","sanskrit":"एक पाद धनुरासन","transliteration":"Eka Pāda Dhanurāsana","level":"Advanced","category":"Backbend","tags":[],"image":"","notes":""},
+      {"english":"One-Legged Pigeon Backbend","sanskrit":"एक पाद कपोतासन","transliteration":"Eka Pāda Kapotāsana","level":"Advanced","category":"Backbend","tags":[],"image":"","notes":""},
+      {"english":"Couch Pose A","sanskrit":"पर्यङ्कासन A","transliteration":"Paryaṅkāsana A","level":"Advanced","category":"Backbend","tags":[],"image":"","notes":""},
+      {"english":"Couch Pose B","sanskrit":"पर्यङ्कासन B","transliteration":"Paryaṅkāsana B","level":"Advanced","category":"Backbend","tags":[],"image":"","notes":""},
+      {"english":"Womb Staff Pose","sanskrit":"योनि दण्डासन","transliteration":"Yoni Daṇḍāsana","level":"Advanced","category":"Seated","tags":[],"image":"","notes":""},
+      {"english":"Arm Staff Pose","sanskrit":"भुजा दण्डासन","transliteration":"Bhujā Daṇḍāsana","level":"Advanced","category":"Arm Balance","tags":[],"image":"","notes":""},
+      {"english":"Side Staff Pose","sanskrit":"पार्श्व दण्डासन","transliteration":"Pārśva Daṇḍāsana","level":"Advanced","category":"Seated","tags":[],"image":"","notes":""},
+      {"english":"Upward Staff Pose","sanskrit":"ऊर्ध्व दण्डासन","transliteration":"Ūrdhva Daṇḍāsana","level":"Advanced","category":"Inversion","tags":[],"image":"","notes":""},
+      {"english":"Downward Staff Pose","sanskrit":"अधो दण्डासन","transliteration":"Adho Daṇḍāsana","level":"Advanced","category":"Inversion","tags":[],"image":"","notes":""},
+      {"english":"Right-Angle Splits","sanskrit":"समकोणासन","transliteration":"Samakonāsana","level":"Advanced","category":"Hip Opener","tags":[],"image":"","notes":""},
+      {"english":"Om Pose","sanskrit":"ओंकारासन","transliteration":"Oṃkārāsana","level":"Advanced","category":"Closing","tags":[],"image":"","notes":""}
     ];
 
     function renderPostures() {
@@ -1596,15 +1727,19 @@
               <input id="p-search" class="input" placeholder="Search English or Sanskrit" aria-label="Search postures" />
               <select id="p-cat" class="input" aria-label="Filter by category">
                 <option value="">All categories</option>
-                <option>standing</option>
-                <option>seated</option>
-                <option>backbend</option>
-                <option>twist</option>
-                <option>inversion</option>
-                <option>arm balance</option>
-                <option>hip opener</option>
-                <option>forward bend</option>
-                <option>closing</option>
+                <option>Standing</option>
+                <option>Seated</option>
+                <option>Backbend</option>
+                <option>Twist</option>
+                <option>Inversion</option>
+                <option>Arm Balance</option>
+                <option>Hip Opener</option>
+                <option>Forward Bend</option>
+                <option>Closing</option>
+                <option>Transition</option>
+                <option>Core</option>
+                <option>Supine</option>
+                <option>Kneeling</option>
               </select>
             </div>
           </div>
