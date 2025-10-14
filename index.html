@@ -193,6 +193,8 @@
     .drawer { background: linear-gradient(180deg, var(--card), var(--card-2)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 14px; box-shadow: var(--shadow-1); }
     .tag { display: inline-block; padding: 2px 8px; font-size: 12px; border-radius: 999px; border: 1px solid #2b3a72; color: #cfe3ff; margin: 0 6px 6px 0; cursor: pointer; }
     .tag.active { background: rgba(45,212,191,0.15); border-color: rgba(45,212,191,0.35); }
+    .two-col { display: grid; gap: 12px; }
+    @media (min-width: 860px) { .two-col { grid-template-columns: 1fr 1fr; } }
 
     /* Postures */
     .posture-filters { position: sticky; top: 64px; z-index: 5; background: linear-gradient(180deg, rgba(15,25,51,0.92), rgba(15,25,51,0.6)); padding: 8px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(8px); }
@@ -221,7 +223,8 @@
       <nav class="nav-actions" aria-label="Primary">
         <a class="btn ghost nav-link" href="#/" role="button" aria-label="Home">Home</a>
         <a class="btn ghost nav-link" href="#/postures" role="button" aria-label="Postures">Postures</a>
-        <a class="btn ghost nav-link" href="#/portal?tab=Mantras" role="button" aria-label="Mantras">Mantras</a>
+        <a class="btn ghost nav-link" href="#/mantras" role="button" aria-label="Traditional Mantras">Traditional Mantras</a>
+        <a class="btn ghost nav-link" href="#/mantra-generator" role="button" aria-label="Mantra Generator">Mantra Generator</a>
         <a class="btn ghost nav-link" href="#/portal?tab=BreathPacer" role="button" aria-label="Breath Pacer">BreathPacer</a>
         <a class="btn nav-link" href="#/teacher" role="button" aria-label="Teacher Portal">Teacher</a>
       </nav>
@@ -499,6 +502,10 @@
           return renderLanding();
         case '#/postures':
           return renderPostures();
+        case '#/mantras':
+          return renderTraditionalMantras();
+        case '#/mantra-generator':
+          return renderMantraGenerator();
         case '#/join':
           return renderJoin(query);
         case '#/teacher':
@@ -1504,6 +1511,177 @@
       AppRoot.focus();
     }
 
+    // Route: Traditional Mantras
+    function renderTraditionalMantras() {
+      const t = App.teacher || App.activeTeacher || App.state.teachers[App.state.demoTeacherId];
+      if (!t) { navigate('#/join'); return; }
+      AppRoot.innerHTML = `
+        <section class="grid" aria-label="Traditional Mantras">
+          <div class="card">
+            <div class="row" style="justify-content:space-between; align-items:center;">
+              <strong>Traditional Mantras</strong>
+              <div class="row">
+                <input id="tm-search" class="input" placeholder="Search mantras or tags" aria-label="Search mantras" />
+                <select id="tm-status" class="input" aria-label="Filter by status">
+                  <option value="">All</option>
+                  <option value="published">Published</option>
+                  <option value="draft">Draft</option>
+                </select>
+              </div>
+            </div>
+            <div class="space"></div>
+            <div id="tm-tags" class="row" role="group" aria-label="Tag filters"></div>
+          </div>
+          <div id="tm-list" class="list" aria-label="Mantra list"></div>
+        </section>
+      `;
+      const list = document.getElementById('tm-list');
+      const search = document.getElementById('tm-search');
+      const statusSel = document.getElementById('tm-status');
+      const tagsWrap = document.getElementById('tm-tags');
+      function draw() {
+        const q = (search.value||'').toLowerCase();
+        const status = statusSel.value;
+        const activeTags = Array.from(tagsWrap.querySelectorAll('.tag.active')).map(b => b.getAttribute('data-tag'));
+        const items = (t.mantras||[]).map(upgradeMantraShape).filter(m => {
+          const matchesSearch = !q || [m.title, m.devanagari, m.transliteration, m.meaning, m.usage, (m.tags||[]).join(' ')].join(' ').toLowerCase().includes(q);
+          const matchesTags = activeTags.length === 0 || (m.tags||[]).some(tag => activeTags.includes(tag));
+          const matchesStatus = !status || (m.status||'draft')===status;
+          return matchesSearch && matchesTags && matchesStatus;
+        });
+        const tagSet = new Set(); (t.mantras||[]).forEach(m => (upgradeMantraShape(m).tags||[]).forEach(tag => tagSet.add(tag)));
+        tagsWrap.innerHTML = Array.from(tagSet).sort().map(tag => `<button class="tag" data-tag="${tag}">${tag}</button>`).join('');
+        tagsWrap.querySelectorAll('.tag').forEach(btn => btn.addEventListener('click', (e) => { e.currentTarget.classList.toggle('active'); draw(); }));
+        list.innerHTML = items.map(m => `
+          <div class="mantra-card" data-m="${m.id}">
+            <div class="row" style="justify-content:space-between; align-items:flex-start;">
+              <div>
+                <div class="devanagari">${m.devanagari||''}</div>
+                <div class="translit">${m.transliteration||''}</div>
+                <strong>${m.title}</strong>
+                <div class="small">${m.meaning||''}</div>
+                ${(m.tags||[]).map(tg => `<span class="chip">${tg}</span>`).join(' ')}
+              </div>
+              <div class="seq-actions">
+                <button class="btn sm ghost" data-act="edit">Edit</button>
+                <button class="btn sm ghost" data-act="toggle">${(m.status||'draft')==='published'?'Unpublish':'Publish'}</button>
+                <button class="btn sm danger" data-act="del">Delete</button>
+                <button class="btn sm" data-act="export">Export</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+        list.querySelectorAll('[data-act]').forEach(btn => btn.addEventListener('click', (e) => {
+          const id = e.currentTarget.closest('[data-m]').getAttribute('data-m');
+          const act = e.currentTarget.getAttribute('data-act');
+          const idx = (t.mantras||[]).findIndex(x => upgradeMantraShape(x).id === id);
+          if (idx < 0) return;
+          if (act === 'edit') { navigate('#/teacher'); setTimeout(() => fillMantraForm(upgradeMantraShape(t.mantras[idx])), 50); }
+          if (act === 'toggle') { const cur = upgradeMantraShape(t.mantras[idx]); t.mantras[idx] = { ...cur, status: (cur.status||'draft')==='published'?'draft':'published' }; persist(); draw(); }
+          if (act === 'del') { t.mantras.splice(idx, 1); persist(); draw(); }
+          if (act === 'export') { const data = JSON.stringify([upgradeMantraShape(t.mantras[idx])], null, 2); const url = URL.createObjectURL(new Blob([data],{type:'application/json'})); const a = document.createElement('a'); a.href=url; a.download=`mantra-${id}.json`; a.click(); URL.revokeObjectURL(url); }
+        }));
+        if (App._dupesRemoved && !App._dupesToastShown) { showToast(App._dupesRemoved + ' duplicates removed.'); App._dupesToastShown = true; }
+      }
+      search.addEventListener('input', draw); statusSel.addEventListener('change', draw); draw(); AppRoot.focus();
+    }
+
+    // Route: Mantra Generator
+    function renderMantraGenerator() {
+      const t = App.teacher || App.activeTeacher || App.state.teachers[App.state.demoTeacherId];
+      if (!t) { navigate('#/join'); return; }
+      AppRoot.innerHTML = `
+        <section class="two-col" aria-label="Mantra Generator">
+          <div class="card">
+            <strong>Generate</strong>
+            <div class="space"></div>
+            <div class="grid">
+              <div>
+                <div class="small">Intent</div>
+                <div id="g-intents" class="row"></div>
+              </div>
+              <div>
+                <label>Bīja Seed</label>
+                <select id="g-seed" class="input">
+                  <option>Om</option>
+                  <option>So’ham</option>
+                  <option>Śāntiḥ</option>
+                  <option>Hrīṃ</option>
+                  <option>Aiṃ</option>
+                  <option>Klīṃ</option>
+                  <option>Gaṃ</option>
+                  <option>Dum</option>
+                </select>
+              </div>
+              <div>
+                <label>Pattern</label>
+                <select id="g-pattern" class="input">
+                  <option>Breath-sync</option>
+                  <option>Invocation</option>
+                  <option>Affirmation</option>
+                </select>
+              </div>
+              <div class="row">
+                <input id="g-recs" class="input" type="number" min="1" value="108" aria-label="Recitations" style="max-width:140px;" />
+                <label class="row" style="gap:6px;">
+                  <input id="g-dev" type="checkbox" checked /> Include Devanāgarī
+                </label>
+                <label class="row" style="gap:6px;">
+                  <input id="g-trans" type="checkbox" checked /> Include Transliteration
+                </label>
+              </div>
+            </div>
+            <div class="space"></div>
+            <div class="row" style="justify-content:flex-end; gap:8px;">
+              <button id="g-generate" class="btn sm">Generate</button>
+              <button id="g-save-draft" class="btn sm ghost">Save Draft</button>
+              <button id="g-publish" class="btn sm success">Publish</button>
+              <button id="g-copy" class="btn sm">Copy</button>
+              <button id="g-export" class="btn sm">Export JSON</button>
+            </div>
+          </div>
+          <div class="card">
+            <strong>Preview</strong>
+            <div id="g-preview" class="drawer" style="margin-top:8px;"></div>
+          </div>
+        </section>
+      `;
+      const intents = ['focus','calm','protection','healing','learning','compassion','clarity','stillness','energy'];
+      const wrap = document.getElementById('g-intents');
+      wrap.innerHTML = intents.map(i => `<button class="tag" data-intent="${i}">${i}</button>`).join('');
+      wrap.querySelectorAll('.tag').forEach(b => b.addEventListener('click', (e) => { e.currentTarget.classList.toggle('active'); update(); }));
+      ['g-seed','g-pattern','g-recs','g-dev','g-trans'].forEach(id => document.getElementById(id).addEventListener('input', update));
+      document.getElementById('g-generate').addEventListener('click', update);
+      document.getElementById('g-save-draft').addEventListener('click', () => save('draft'));
+      document.getElementById('g-publish').addEventListener('click', () => save('published'));
+      document.getElementById('g-copy').addEventListener('click', () => copyToClipboard(JSON.stringify(current(), null, 2), document.getElementById('g-copy')));
+      document.getElementById('g-export').addEventListener('click', () => {
+        const data = JSON.stringify(current(), null, 2);
+        const url = URL.createObjectURL(new Blob([data],{type:'application/json'}));
+        const a = document.createElement('a'); a.href=url; a.download='mantra.json'; a.click(); URL.revokeObjectURL(url);
+      });
+      function selected(){ return Array.from(document.querySelectorAll('#g-intents .tag.active')).map(b => b.getAttribute('data-intent')); }
+      function current(){
+        const seed = document.getElementById('g-seed').value;
+        const pattern = document.getElementById('g-pattern').value;
+        const recs = parseInt(document.getElementById('g-recs').value || '108', 10);
+        const incDev = document.getElementById('g-dev').checked;
+        const incTrans = document.getElementById('g-trans').checked;
+        const intents = selected();
+        const base = generateMantra({ seed, pattern, recs, incDev, incTrans, intents });
+        return { ...base, audio: { mp3: '', voiceover_secs: 0 } };
+      }
+      function update(){ const m = current(); const p = document.getElementById('g-preview'); p.innerHTML = `
+        <div class="devanagari">${m.devanagari||''}</div>
+        <div class="translit">${m.transliteration||''}</div>
+        <strong>${m.title}</strong>
+        <div class="small">${m.meaning||''}</div>
+        <div class="muted">${m.usage||''}</div>
+        <div class="row" style="margin-top:6px;">${(m.tags||[]).map(tg => `<span class='chip'>${tg}</span>`).join(' ')}</div>
+        <div class="small" style="margin-top:6px;">Recitations: ${m.recs||''}</div>`; }
+      function save(status){ const m = current(); const baseId = slug(m.title||'mantra'); const id = makeUniqueId(baseId, t); const entry = { ...m, id, status }; t.mantras = t.mantras||[]; t.mantras.unshift(entry); persist(); showToast(status==='published'?'Mantra published':'Mantra saved'); }
+      update(); AppRoot.focus();
+    }
     function drawAssigned(host, t) {
       const assignments = t.assignments;
       if (assignments.length === 0) { host.appendChild(el(`<div class="card"><div class="muted">No assignments yet.</div></div>`)); return; }
