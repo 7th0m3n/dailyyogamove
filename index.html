@@ -243,6 +243,8 @@
     const STORAGE_KEY = 'dym:store:v1';
     const SAVE_DEBOUNCE_MS = 300;
     let saveTimeout = null;
+    // UI state
+    let isPostureOpen = false;
 
     function nowIso() { return new Date().toISOString(); }
     function generateId(prefix = 'id') { return prefix + '_' + Math.random().toString(36).slice(2, 10); }
@@ -2031,7 +2033,7 @@
     function renderPostures() {
       AppRoot.innerHTML = `
         <section class="grid" aria-label="Postures">
-          <div class="posture-filters" role="search">
+          <div id="postureFilters" class="posture-filters" role="search" style="${isPostureOpen ? 'display:none;' : ''}">
             <div class="row">
               <input id="p-search" class="input" placeholder="Search English or Sanskrit" aria-label="Search postures" />
               <select id="p-cat" class="input" aria-label="Filter by category">
@@ -2107,6 +2109,9 @@
         });
       }
       function openModal(p) {
+        const filters = document.getElementById('postureFilters');
+        if (filters) filters.style.display = 'none';
+        isPostureOpen = true;
         pmTitle.textContent = p.english;
         const hasGuide = !!p.guide;
         pmBody.innerHTML = `
@@ -2126,7 +2131,7 @@
         `;
         modal.setAttribute('open',''); modal.setAttribute('aria-hidden','false');
       }
-      function closeModal(){ modal.removeAttribute('open'); modal.setAttribute('aria-hidden','true'); }
+      function closeModal(){ modal.removeAttribute('open'); modal.setAttribute('aria-hidden','true'); const filters = document.getElementById('postureFilters'); if (filters) filters.style.display = ''; isPostureOpen = false; }
 
       search.addEventListener('input', draw);
       cat.addEventListener('change', draw);
