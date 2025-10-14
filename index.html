@@ -220,7 +220,6 @@
       </a>
       <nav class="nav-actions" aria-label="Primary">
         <a class="btn ghost nav-link" href="#/" role="button" aria-label="Home">Home</a>
-        <a class="btn ghost nav-link" href="#/postures" role="button" aria-label="Postures">Postures</a>
         <a class="btn ghost nav-link" href="#/mantras" role="button" aria-label="Traditional Mantras">Traditional Mantras</a>
         <a class="btn ghost nav-link" href="#/mantra-generator" role="button" aria-label="Mantra Generator">Mantra Generator</a>
         <a class="btn ghost nav-link" href="#/portal?tab=BreathPacer" role="button" aria-label="Breath Pacer">BreathPacer</a>
@@ -555,20 +554,90 @@
           </div>
         </section>
 
-        <section class="grid cols-2" aria-label="Highlights">
+        <section class="grid cols-2" aria-label="Explore Demo">
           <div class="card">
-            <h3>Signature Sequences</h3>
-            <p class="muted">Create draft or publish. Share with a link or QR. Drag to reorder poses with keyboard fallback.</p>
+            <h3>Students</h3>
+            <div class="list">
+              <div class="seq-item">
+                <div>
+                  <strong>Assigned Asana & Sequences</strong>
+                  <div class="small">See programs assigned by your teacher.</div>
+                </div>
+                <div class="seq-actions">
+                  <a class="btn sm" href="#/portal" aria-label="Open Student Portal">Open</a>
+                </div>
+              </div>
+              <div class="seq-item">
+                <div>
+                  <strong>Traditional Mantras</strong>
+                  <div class="small">Explore teacher-published and core mantras.</div>
+                </div>
+                <div class="seq-actions">
+                  <a class="btn sm" href="#/mantras" aria-label="Open Traditional Mantras">Open</a>
+                </div>
+              </div>
+              <div class="seq-item">
+                <div>
+                  <strong>BreathPacer</strong>
+                  <div class="small">Timed inhale/hold/exhale visual pacer.</div>
+                </div>
+                <div class="seq-actions">
+                  <a class="btn sm" href="#/portal?tab=BreathPacer" aria-label="Open BreathPacer">Open</a>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="card">
-            <h3>Programs & Assignments</h3>
-            <p class="muted">Compose weekly plans and assign to students by code or all.</p>
+            <h3>Teachers</h3>
+            <div class="list">
+              <div class="seq-item">
+                <div>
+                  <strong>Strengthāsana</strong>
+                  <div class="small">Create and publish Signature Sequences.</div>
+                </div>
+                <div class="seq-actions">
+                  <a class="btn sm" href="#/teacher" aria-label="Open Teacher Portal">Open</a>
+                </div>
+              </div>
+              <div class="seq-item">
+                <div>
+                  <strong>Paripūrṇa Prāṇa</strong>
+                  <div class="small">Pranayama tools and presets.</div>
+                </div>
+                <div class="seq-actions">
+                  <a class="btn sm" href="#/portal?tab=Paripūrṇa Prāṇa" aria-label="Open Paripūrṇa Prāṇa">Open</a>
+                </div>
+              </div>
+              <div class="seq-item">
+                <div>
+                  <strong>Complete Postures List</strong>
+                  <div class="small">Browse and reference every asana in the DailyYogaMove library.</div>
+                </div>
+                <div class="seq-actions">
+                  <button class="btn sm" id="open-postures" aria-label="Open Complete Postures List">Open</button>
+                </div>
+              </div>
+              <div class="seq-item">
+                <div>
+                  <strong>Mantra Generator</strong>
+                  <div class="small">Create, preview, and publish mantras.</div>
+                </div>
+                <div class="seq-actions">
+                  <a class="btn sm" href="#/mantra-generator" aria-label="Open Mantra Generator">Open</a>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       `;
       document.getElementById('cta-demo').addEventListener('click', () => {
         const demo = teacherByCode(demoCode);
         if (demo) { App.state.activeTeacherId = demo.id; persist(); navigate('#/portal'); }
+      });
+      const posturesBtn = document.getElementById('open-postures');
+      if (posturesBtn) posturesBtn.addEventListener('click', () => {
+        if (!App.state.currentTeacherId) { showToast('Teacher sign-in required.'); navigate('#/teacher'); return; }
+        navigate('#/postures');
       });
       AppRoot.focus();
     }
