@@ -67,11 +67,15 @@
     img { max-width: 100%; display: block; }
 
     .container {
-      max-width: 1200px;
+      max-width: 1000px;
       margin: 0 auto;
       padding: 24px 16px 96px;
     }
-    /* Removed global header */
+    header[role="banner"] {
+      position: sticky; top: 0; z-index: 10;
+      background: linear-gradient(180deg, rgba(15,25,51,0.92), rgba(15,25,51,0.55) 60%, transparent);
+      backdrop-filter: blur(10px);
+    }
     .nav {
       display: flex; align-items: center; justify-content: space-between;
       gap: var(--gap);
@@ -111,10 +115,6 @@
     .hero { margin: 28px 0 24px; text-align: center; }
     .hero h1 { font-family: "Playfair Display", Georgia, serif; font-size: clamp(28px, 6vw, 48px); letter-spacing: 0.2px; margin: 0 0 10px; }
     .hero p { color: var(--muted); margin: 0 0 16px; }
-
-    /* Simple fade-in for route changes */
-    .fade-in { animation: fadeInView 220ms ease; }
-    @keyframes fadeInView { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
     .grid { display: grid; gap: var(--gap); }
     @media (min-width: 740px) { .grid.cols-2 { grid-template-columns: 1fr 1fr; } }
@@ -193,8 +193,6 @@
     .drawer { background: linear-gradient(180deg, var(--card), var(--card-2)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 14px; box-shadow: var(--shadow-1); }
     .tag { display: inline-block; padding: 2px 8px; font-size: 12px; border-radius: 999px; border: 1px solid #2b3a72; color: #cfe3ff; margin: 0 6px 6px 0; cursor: pointer; }
     .tag.active { background: rgba(45,212,191,0.15); border-color: rgba(45,212,191,0.35); }
-    .two-col { display: grid; gap: 12px; }
-    @media (min-width: 860px) { .two-col { grid-template-columns: 1fr 1fr; } }
 
     /* Postures */
     .posture-filters { position: sticky; top: 64px; z-index: 5; background: linear-gradient(180deg, rgba(15,25,51,0.92), rgba(15,25,51,0.6)); padding: 8px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(8px); }
@@ -214,7 +212,22 @@
   </style>
 </head>
 <body>
-  
+  <header role="banner" aria-label="Top Navigation">
+    <div class="nav container">
+      <a class="brand" href="#/" aria-label="DailyYogaMove Home">
+        <span class="brand-badge" aria-hidden="true"></span>
+        <span>DailyYogaMove</span>
+      </a>
+      <nav class="nav-actions" aria-label="Primary">
+        <a class="btn ghost nav-link" href="#/" role="button" aria-label="Home">Home</a>
+        <a class="btn ghost nav-link" href="#/postures" role="button" aria-label="Postures">Postures</a>
+        <a class="btn ghost nav-link" href="#/mantras" role="button" aria-label="Traditional Mantras">Traditional Mantras</a>
+        <a class="btn ghost nav-link" href="#/mantra-generator" role="button" aria-label="Mantra Generator">Mantra Generator</a>
+        <a class="btn ghost nav-link" href="#/portal?tab=BreathPacer" role="button" aria-label="Breath Pacer">BreathPacer</a>
+        <a class="btn nav-link" href="#/teacher" role="button" aria-label="Teacher Portal">Teacher</a>
+      </nav>
+    </div>
+  </header>
 
   <main id="app" class="container" role="main" tabindex="-1"></main>
 
@@ -472,15 +485,19 @@
       const { path, query } = parseHash();
       // Smooth scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Fade-in transition
-      AppRoot.classList.remove('fade-in');
-      void AppRoot.offsetWidth; // reflow
-      AppRoot.classList.add('fade-in');
+      // Set active nav link
+      document.querySelectorAll('.nav-link').forEach(a => {
+        const href = a.getAttribute('href');
+        const target = href.split('?')[0];
+        const current = (location.hash || '#/').split('?')[0];
+        const isActive = target === current || (target === '#/' && (current === '#/' || current === '#' || current === ''));
+        a.classList.toggle('active', !!isActive);
+      });
       switch (path) {
         case '#/':
         case '#':
         case '':
-          return renderExploreHub();
+          return renderLanding();
         case '#/postures':
           return renderPostures();
         case '#/mantras':
@@ -491,9 +508,8 @@
           return renderJoin(query);
         case '#/teacher':
           return renderTeacherPortal();
-        case '#/portal': // legacy explore
-        case '#/explore':
-          return renderExploreHub();
+        case '#/portal':
+          return renderStudentPortal(query);
         default:
           navigate('#/');
       }
@@ -523,9 +539,34 @@
 
     // Landing
     function renderLanding() {
-      // Landing replaced by Explore hub
-      renderExploreHub();
-      return;
+      const demoCode = 'DEMO';
+      AppRoot.innerHTML = `
+        <section class="hero" aria-labelledby="hero-title">
+          <h1 id="hero-title">Practice. Sequence. Teach.</h1>
+          <p>Mobile-first yoga teaching and student portal with breath pacing.</p>
+          <div class="row" role="group" aria-label="Primary Calls to Action" style="justify-content:center; gap:10px;">
+            <a class="btn" href="#/join" role="button">Enter Teacher Code</a>
+            <a class="btn secondary" href="#/teacher" role="button">I'm a Teacher</a>
+            <button class="btn ghost" id="cta-demo" aria-label="Explore Demo">Explore Demo</button>
+          </div>
+        </section>
+
+        <section class="grid cols-2" aria-label="Highlights">
+          <div class="card">
+            <h3>Signature Sequences</h3>
+            <p class="muted">Create draft or publish. Share with a link or QR. Drag to reorder poses with keyboard fallback.</p>
+          </div>
+          <div class="card">
+            <h3>Programs & Assignments</h3>
+            <p class="muted">Compose weekly plans and assign to students by code or all.</p>
+          </div>
+        </section>
+      `;
+      document.getElementById('cta-demo').addEventListener('click', () => {
+        const demo = teacherByCode(demoCode);
+        if (demo) { App.state.activeTeacherId = demo.id; persist(); navigate('#/portal'); }
+      });
+      AppRoot.focus();
     }
 
     // Join
@@ -717,13 +758,13 @@
           </div>
 
           <div class="card" aria-labelledby="mantra-title">
-            <h3 id="mantra-title">Mantras</h3>
+            <h3 id="mantra-title">Traditional Mantras</h3>
             <div class="row">
               <input id="m-search" class="input" placeholder="Search mantras or tags" />
               <button id="m-export" class="btn sm" aria-label="Export Mantras JSON">Export JSON</button>
               <button id="m-import" class="btn sm ghost" aria-label="Import Mantras JSON">Import JSON</button>
               <span class="spacer"></span>
-              <button id="m-generate" class="btn sm" aria-label="Open Mantra Generator">Generate</button>
+              <a class="btn sm" href="#/mantra-generator" aria-label="Open Mantra Generator">Generator</a>
             </div>
             <div class="space"></div>
             <details class="drawer">
@@ -751,60 +792,7 @@
             <div class="space"></div>
             <div id="mantra-list" class="list"></div>
           </div>
-          <div id="mgen" class="modal" aria-hidden="true" aria-label="Mantra Generator" role="dialog">
-            <div class="modal-card" role="document">
-              <div class="row" style="justify-content:space-between;">
-                <strong>Mantra Generator</strong>
-                <button class="btn sm ghost" id="mgen-close" aria-label="Close">Close</button>
-              </div>
-              <div class="space"></div>
-              <div class="grid">
-                <div>
-                  <div class="small">Intent</div>
-                  <div id="mgen-intents" class="row"></div>
-                </div>
-                <div>
-                  <label>Bīja Seed</label>
-                  <select id="mgen-seed" class="input">
-                    <option>Om</option>
-                    <option>So’ham</option>
-                    <option>Śāntiḥ</option>
-                    <option>Hrīṃ</option>
-                    <option>Aiṃ</option>
-                    <option>Klīṃ</option>
-                    <option>Gaṃ</option>
-                    <option>Dum</option>
-                  </select>
-                </div>
-                <div>
-                  <label>Pattern</label>
-                  <select id="mgen-pattern" class="input">
-                    <option>Breath-sync</option>
-                    <option>Invocation</option>
-                    <option>Affirmation</option>
-                  </select>
-                </div>
-                <div class="row">
-                  <input id="mgen-recs" class="input" type="number" min="1" value="108" aria-label="Recitations" style="max-width:140px;" />
-                  <label class="row" style="gap:6px;">
-                    <input id="mgen-dev" type="checkbox" checked /> Include Devanāgarī
-                  </label>
-                  <label class="row" style="gap:6px;">
-                    <input id="mgen-trans" type="checkbox" checked /> Include Transliteration
-                  </label>
-                </div>
-              </div>
-              <div class="space"></div>
-              <div id="mgen-preview" class="drawer"></div>
-              <div class="row" style="justify-content:flex-end; gap:8px; margin-top:8px;">
-                <button id="mgen-generate" class="btn sm" aria-label="Generate">Generate</button>
-                <button id="mgen-save-draft" class="btn sm ghost" aria-label="Save Draft">Save as Draft</button>
-                <button id="mgen-publish" class="btn sm success" aria-label="Publish">Publish</button>
-                <button id="mgen-copy" class="btn sm" aria-label="Copy JSON">Copy</button>
-                <button id="mgen-export" class="btn sm" aria-label="Export JSON">Export JSON</button>
-              </div>
-            </div>
-          </div>
+          <!-- Mantra Generator moved to its own route -->
         </section>
       `;
 
@@ -1290,14 +1278,6 @@
         if (draft) draft.addEventListener('click', () => saveMantra('draft'));
         if (reset) reset.addEventListener('click', () => fillMantraForm({ id: '', title: '', devanagari: '', transliteration: '', meaning: '', usage: '', recs: '', tags: [] }));
         if (search) search.addEventListener('input', () => drawMantras());
-        // Generator wiring
-        const genBtn = document.getElementById('m-generate');
-        const modal = document.getElementById('mgen');
-        const close = document.getElementById('mgen-close');
-        if (genBtn) genBtn.addEventListener('click', () => { openGen(); });
-        if (close) close.addEventListener('click', () => closeGen());
-        document.addEventListener('keydown', (e) => { if (modal.hasAttribute('open') && e.key === 'Escape') closeGen(); });
-        setupGenUI();
       })();
 
       function saveMantra(status) {
@@ -1328,7 +1308,7 @@
       }
       drawMantras();
 
-      // -------- Mantra Generator --------
+      // -------- Mantra Generator (route-based) --------
       function setupGenUI(){
         const intents = ['focus','calm','protection','healing','learning','compassion','clarity','stillness','energy'];
         const wrap = document.getElementById('mgen-intents'); if (!wrap) return;
@@ -1347,8 +1327,6 @@
         });
         updatePreview();
       }
-      function openGen(){ const m = document.getElementById('mgen'); m.setAttribute('open',''); m.setAttribute('aria-hidden','false'); }
-      function closeGen(){ const m = document.getElementById('mgen'); m.removeAttribute('open'); m.setAttribute('aria-hidden','true'); }
       function selectedIntents(){ return Array.from(document.querySelectorAll('#mgen-intents .tag.active')).map(b => b.getAttribute('data-intent')); }
       function currentPreview(){
         const seed = document.getElementById('mgen-seed').value;
@@ -1425,7 +1403,7 @@
       if (!t) { navigate('#/join'); return; }
       setToolbarForTeacher(t);
       const tabs = [];
-      if (t.modules.strengthasana) tabs.push('Assigned Studies','Strengthāsana');
+      if (t.modules.strengthasana) tabs.push('Assigned','Strengthāsana');
       if (t.modules.mantras) tabs.push('Mantras');
       if (t.modules.breathpacer) tabs.push('BreathPacer');
       if (t.modules.pranayama) tabs.push('Paripūrṇa Prāṇa');
@@ -1434,9 +1412,6 @@
 
       AppRoot.innerHTML = `
         <section class="grid" aria-label="Student Portal">
-          <div class="row" style="margin-bottom:8px;">
-            <a class="btn ghost" href="#/explore" aria-label="Back to Explore">← Back to Explore</a>
-          </div>
           <div class="card">
             <div class="row" style="align-items:center; gap:12px;">
               ${logo}
@@ -1460,7 +1435,7 @@
         document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', b.getAttribute('data-tab') === tab ? 'true' : 'false'));
         const host = document.getElementById('tab-content');
         host.innerHTML = '';
-        if (tab === 'Assigned Studies') drawAssigned(host, t);
+        if (tab === 'Assigned') drawAssigned(host, t);
         if (tab === 'Strengthāsana') drawStrength(host, t, query);
         if (tab === 'Mantras') drawMantrasStudent(host, t);
         if (tab === 'BreathPacer') drawBreathPacer(host);
@@ -1471,133 +1446,59 @@
       AppRoot.focus();
     }
 
-    // Explore Hub (Students left, Teachers right)
-    function renderExploreHub() {
-      const t = App.activeTeacher || App.state.teachers[App.state.demoTeacherId];
-      AppRoot.innerHTML = `
-        <section class="grid" aria-label="Explore DailyYogaMove Portal">
-          <section class="hero" aria-labelledby="ex-hero">
-            <h1 id="ex-hero">Explore DailyYogaMove</h1>
-            <p>Choose your path — student or teacher.</p>
-          </section>
-          <div class="two-col" style="gap:24px;">
-            <section aria-labelledby="students-h2">
-              <h2 id="students-h2" style="text-align:center;">Students</h2>
-              <div class="grid" style="gap:16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
-                <div class="card">
-                  <strong>Assigned Studies</strong>
-                  <div class="small">View your assigned programs and mark sessions complete.</div>
-                  <div class="space"></div>
-                  <div class="row" style="justify-content:flex-end;">
-                    <a class="btn" href="#/assigned" aria-label="Open Assigned Studies">Open</a>
-                  </div>
-                </div>
-                <div class="card">
-                  <strong>Traditional Mantras</strong>
-                  <div class="small">Browse and recite teacher-published mantras.</div>
-                  <div class="space"></div>
-                  <div class="row" style="justify-content:flex-end;">
-                    <a class="btn" href="#/mantras" aria-label="Open Traditional Mantras">Open</a>
-                  </div>
-                </div>
-                <div class="card">
-                  <strong>BreathPacer</strong>
-                  <div class="small">Pace inhales/exhales with visual guidance.</div>
-                  <div class="space"></div>
-                  <div class="row" style="justify-content:flex-end;">
-                    <a class="btn" href="#/breathpacer" aria-label="Open BreathPacer">Open</a>
-                  </div>
-                </div>
-              </div>
-              ${(!App.state.activeTeacherId ? `<div class="card"><div class="muted">No teacher selected. Assigned Studies will appear after you join a teacher.</div><div class="space"></div><a class="btn" href="#/join">Join a teacher</a></div>` : '')}
-            </section>
-
-            <section aria-labelledby="teachers-h2">
-              <h2 id="teachers-h2" style="text-align:center;">Teachers</h2>
-              <div class="grid" style="gap:16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
-                <div class="card">
-                  <strong>Strengthāsana</strong>
-                  <div class="small">Create and publish signature sequences.</div>
-                  <div class="space"></div>
-                  <div class="row" style="justify-content:flex-end;">
-                    <button class="btn" data-open="#/strengthasana" aria-label="Open Strengthāsana">Open</button>
-                  </div>
-                </div>
-                <div class="card">
-                  <strong>Paripūrṇa Prāṇa</strong>
-                  <div class="small">Breath presets and guidance for class pacing.</div>
-                  <div class="space"></div>
-                  <div class="row" style="justify-content:flex-end;">
-                    <button class="btn" data-open="#/pranayama" aria-label="Open Paripūrṇa Prāṇa">Open</button>
-                  </div>
-                </div>
-                <div class="card">
-                  <strong>Mantra Generator</strong>
-                  <div class="small">Design new mantras and publish to your studio.</div>
-                  <div class="space"></div>
-                  <div class="row" style="justify-content:flex-end;">
-                    <button class="btn" data-open="#/mantra-generator" aria-label="Open Mantra Generator">Open</button>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-        </section>
-      `;
-      // Gate teacher actions
-      AppRoot.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', (e) => {
-        const href = e.currentTarget.getAttribute('data-open');
-        if (!App.state.currentTeacherId) { showToast('Teacher sign-in required.'); navigate('#/teacher'); return; }
-        navigate(href);
-      }));
-      AppRoot.focus();
-    }
-
-    // Route: Traditional Mantras
+    // Traditional Mantras route view (teacher list/management without generator)
     function renderTraditionalMantras() {
       const t = App.teacher || App.activeTeacher || App.state.teachers[App.state.demoTeacherId];
       if (!t) { navigate('#/join'); return; }
+      setToolbarForTeacher(t);
       AppRoot.innerHTML = `
         <section class="grid" aria-label="Traditional Mantras">
-          <div class="row" style="margin-bottom:8px;">
-            <a class="btn ghost" href="#/explore" aria-label="Back to Explore">← Back to Explore</a>
-          </div>
           <div class="card">
             <div class="row" style="justify-content:space-between; align-items:center;">
               <strong>Traditional Mantras</strong>
               <div class="row">
-                <input id="tm-search" class="input" placeholder="Search mantras or tags" aria-label="Search mantras" />
-                <select id="tm-status" class="input" aria-label="Filter by status">
-                  <option value="">All</option>
-                  <option value="published">Published</option>
-                  <option value="draft">Draft</option>
-                </select>
+                <a class="btn sm" href="#/mantra-generator" aria-label="Open Mantra Generator">Generator</a>
               </div>
             </div>
             <div class="space"></div>
+            <div class="row">
+              <input id="tm-search" class="input" placeholder="Search mantras or tags" aria-label="Search" />
+              <select id="tm-status" class="input" aria-label="Status filter" style="max-width:180px;">
+                <option value="">All</option>
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+              </select>
+              <span class="spacer"></span>
+              <button id="tm-export" class="btn sm" aria-label="Export JSON">Export JSON</button>
+              <button id="tm-import" class="btn sm ghost" aria-label="Import JSON">Import JSON</button>
+            </div>
+            <div class="space"></div>
             <div id="tm-tags" class="row" role="group" aria-label="Tag filters"></div>
+            <div class="space"></div>
+            <div id="tm-list" class="list"></div>
           </div>
-          <div id="tm-list" class="list" aria-label="Mantra list"></div>
         </section>
       `;
-      const list = document.getElementById('tm-list');
       const search = document.getElementById('tm-search');
       const statusSel = document.getElementById('tm-status');
+      const list = document.getElementById('tm-list');
       const tagsWrap = document.getElementById('tm-tags');
       function draw() {
-        const q = (search.value||'').toLowerCase();
+        const q = (search.value || '').toLowerCase();
         const status = statusSel.value;
-        const activeTags = Array.from(tagsWrap.querySelectorAll('.tag.active')).map(b => b.getAttribute('data-tag'));
-        const items = (t.mantras||[]).map(upgradeMantraShape).filter(m => {
-          const matchesSearch = !q || [m.title, m.devanagari, m.transliteration, m.meaning, m.usage, (m.tags||[]).join(' ')].join(' ').toLowerCase().includes(q);
-          const matchesTags = activeTags.length === 0 || (m.tags||[]).some(tag => activeTags.includes(tag));
-          const matchesStatus = !status || (m.status||'draft')===status;
-          return matchesSearch && matchesTags && matchesStatus;
+        const items = (t.mantras||[]).map(upgradeMantraShape);
+        const filtered = items.filter(m => {
+          const inSearch = !q || [m.title,m.devanagari,m.transliteration,m.meaning,m.usage,(m.tags||[]).join(' ')].join(' ').toLowerCase().includes(q);
+          const inStatus = !status || (m.status||'draft') === status;
+          const activeTags = Array.from(tagsWrap.querySelectorAll('.tag.active')).map(b => b.getAttribute('data-tag'));
+          const inTags = activeTags.length===0 || (m.tags||[]).some(tg => activeTags.includes(tg));
+          return inSearch && inStatus && inTags;
         });
-        const tagSet = new Set(); (t.mantras||[]).forEach(m => (upgradeMantraShape(m).tags||[]).forEach(tag => tagSet.add(tag)));
-        tagsWrap.innerHTML = Array.from(tagSet).sort().map(tag => `<button class="tag" data-tag="${tag}">${tag}</button>`).join('');
-        tagsWrap.querySelectorAll('.tag').forEach(btn => btn.addEventListener('click', (e) => { e.currentTarget.classList.toggle('active'); draw(); }));
-        list.innerHTML = items.map(m => `
+        // tags
+        const tagSet = new Set(); items.forEach(m => (m.tags||[]).forEach(tg => tagSet.add(tg)));
+        tagsWrap.innerHTML = Array.from(tagSet).sort().map(tg => `<button class="tag" data-tag="${tg}">${tg}</button>`).join('');
+        tagsWrap.querySelectorAll('.tag').forEach(b => b.addEventListener('click', (e) => { e.currentTarget.classList.toggle('active'); draw(); }));
+        list.innerHTML = filtered.map(m => `
           <div class="mantra-card" data-m="${m.id}">
             <div class="row" style="justify-content:space-between; align-items:flex-start;">
               <div>
@@ -1614,126 +1515,114 @@
                 <button class="btn sm" data-act="export">Export</button>
               </div>
             </div>
-          </div>
-        `).join('');
+          </div>`).join('');
         list.querySelectorAll('[data-act]').forEach(btn => btn.addEventListener('click', (e) => {
           const id = e.currentTarget.closest('[data-m]').getAttribute('data-m');
           const act = e.currentTarget.getAttribute('data-act');
           const idx = (t.mantras||[]).findIndex(x => upgradeMantraShape(x).id === id);
           if (idx < 0) return;
-          if (act === 'edit') { navigate('#/teacher'); setTimeout(() => fillMantraForm(upgradeMantraShape(t.mantras[idx])), 50); }
+          if (act === 'edit') {
+            const m = upgradeMantraShape(t.mantras[idx]); fillMantraForm(m); document.querySelector('details.drawer summary')?.click();
+          }
           if (act === 'toggle') { const cur = upgradeMantraShape(t.mantras[idx]); t.mantras[idx] = { ...cur, status: (cur.status||'draft')==='published'?'draft':'published' }; persist(); draw(); }
-          if (act === 'del') { t.mantras.splice(idx, 1); persist(); draw(); }
-          if (act === 'export') { const data = JSON.stringify([upgradeMantraShape(t.mantras[idx])], null, 2); const url = URL.createObjectURL(new Blob([data],{type:'application/json'})); const a = document.createElement('a'); a.href=url; a.download=`mantra-${id}.json`; a.click(); URL.revokeObjectURL(url); }
+          if (act === 'del') { t.mantras.splice(idx,1); persist(); draw(); }
+          if (act === 'export') {
+            const data = JSON.stringify([upgradeMantraShape(t.mantras[idx])], null, 2);
+            const blob = new Blob([data], { type:'application/json' }); const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href=url; a.download=`mantra-${id}.json`; a.click(); URL.revokeObjectURL(url);
+          }
         }));
+        // One-time duplicates toast
         if (App._dupesRemoved && !App._dupesToastShown) { showToast(App._dupesRemoved + ' duplicates removed.'); App._dupesToastShown = true; }
       }
-      search.addEventListener('input', draw); statusSel.addEventListener('change', draw); draw(); AppRoot.focus();
+      document.getElementById('tm-export').onclick = () => {
+        const data = JSON.stringify((t.mantras||[]).map(upgradeMantraShape), null, 2);
+        const blob = new Blob([data], { type:'application/json' }); const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download='mantras.json'; a.click(); URL.revokeObjectURL(url);
+      };
+      document.getElementById('tm-import').onclick = () => {
+        const json = prompt('Paste mantras JSON'); if (!json) return;
+        try { const arr = JSON.parse(json); if (Array.isArray(arr)) { t.mantras = dedupeMantras(arr.map(upgradeMantraShape)); persist(); draw(); } }
+        catch(e){ alert('Invalid JSON'); }
+      };
+      search.addEventListener('input', draw);
+      statusSel.addEventListener('change', draw);
+      draw();
+      AppRoot.focus();
     }
 
-    // Route: Mantra Generator
+    // Mantra Generator route view
     function renderMantraGenerator() {
-      const t = App.teacher || App.activeTeacher || App.state.teachers[App.state.demoTeacherId];
+      const t = App.teacher || App.state.teachers[App.state.demoTeacherId];
       if (!t) { navigate('#/join'); return; }
+      setToolbarForTeacher(t);
       AppRoot.innerHTML = `
-        <section class="two-col" aria-label="Mantra Generator">
-          <div class="row" style="margin-bottom:8px; grid-column: 1 / -1;">
-            <a class="btn ghost" href="#/explore" aria-label="Back to Explore">← Back to Explore</a>
-          </div>
-          <div class="card">
-            <strong>Generate</strong>
-            <div class="space"></div>
-            <div class="grid">
-              <div>
-                <div class="small">Intent</div>
-                <div id="g-intents" class="row"></div>
+        <section class="grid" aria-label="Mantra Generator">
+          <div class="grid cols-2">
+            <div class="card">
+              <strong>Mantra Generator</strong>
+              <div class="space"></div>
+              <div class="grid">
+                <div>
+                  <div class="small">Intent</div>
+                  <div id="mgen-intents" class="row"></div>
+                </div>
+                <div>
+                  <label>Bīja Seed</label>
+                  <select id="mgen-seed" class="input">
+                    <option>Om</option>
+                    <option>So’ham</option>
+                    <option>Śāntiḥ</option>
+                    <option>Hrīṃ</option>
+                    <option>Aiṃ</option>
+                    <option>Klīṃ</option>
+                    <option>Gaṃ</option>
+                    <option>Dum</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Pattern</label>
+                  <select id="mgen-pattern" class="input">
+                    <option>Breath-sync</option>
+                    <option>Invocation</option>
+                    <option>Affirmation</option>
+                  </select>
+                </div>
+                <div class="row">
+                  <input id="mgen-recs" class="input" type="number" min="1" value="108" aria-label="Recitations" style="max-width:140px;" />
+                  <label class="row" style="gap:6px;">
+                    <input id="mgen-dev" type="checkbox" checked /> Include Devanāgarī
+                  </label>
+                  <label class="row" style="gap:6px;">
+                    <input id="mgen-trans" type="checkbox" checked /> Include Transliteration
+                  </label>
+                </div>
               </div>
-              <div>
-                <label>Bīja Seed</label>
-                <select id="g-seed" class="input">
-                  <option>Om</option>
-                  <option>So’ham</option>
-                  <option>Śāntiḥ</option>
-                  <option>Hrīṃ</option>
-                  <option>Aiṃ</option>
-                  <option>Klīṃ</option>
-                  <option>Gaṃ</option>
-                  <option>Dum</option>
-                </select>
-              </div>
-              <div>
-                <label>Pattern</label>
-                <select id="g-pattern" class="input">
-                  <option>Breath-sync</option>
-                  <option>Invocation</option>
-                  <option>Affirmation</option>
-                </select>
-              </div>
-              <div class="row">
-                <input id="g-recs" class="input" type="number" min="1" value="108" aria-label="Recitations" style="max-width:140px;" />
-                <label class="row" style="gap:6px;">
-                  <input id="g-dev" type="checkbox" checked /> Include Devanāgarī
-                </label>
-                <label class="row" style="gap:6px;">
-                  <input id="g-trans" type="checkbox" checked /> Include Transliteration
-                </label>
+              <div class="space"></div>
+              <div class="row" style="justify-content:flex-end; gap:8px;">
+                <button id="mgen-generate" class="btn sm" aria-label="Generate">Generate</button>
+                <button id="mgen-save-draft" class="btn sm ghost" aria-label="Save Draft">Save as Draft</button>
+                <button id="mgen-publish" class="btn sm success" aria-label="Publish">Publish</button>
+                <button id="mgen-copy" class="btn sm" aria-label="Copy JSON">Copy</button>
+                <button id="mgen-export" class="btn sm" aria-label="Export JSON">Export JSON</button>
               </div>
             </div>
-            <div class="space"></div>
-            <div class="row" style="justify-content:flex-end; gap:8px;">
-              <button id="g-generate" class="btn sm">Generate</button>
-              <button id="g-save-draft" class="btn sm ghost">Save Draft</button>
-              <button id="g-publish" class="btn sm success">Publish</button>
-              <button id="g-copy" class="btn sm">Copy</button>
-              <button id="g-export" class="btn sm">Export JSON</button>
+            <div class="card">
+              <strong>Preview</strong>
+              <div class="space"></div>
+              <div id="mgen-preview" class="drawer"></div>
             </div>
-          </div>
-          <div class="card">
-            <strong>Preview</strong>
-            <div id="g-preview" class="drawer" style="margin-top:8px;"></div>
           </div>
         </section>
       `;
-      const intents = ['focus','calm','protection','healing','learning','compassion','clarity','stillness','energy'];
-      const wrap = document.getElementById('g-intents');
-      wrap.innerHTML = intents.map(i => `<button class="tag" data-intent="${i}">${i}</button>`).join('');
-      wrap.querySelectorAll('.tag').forEach(b => b.addEventListener('click', (e) => { e.currentTarget.classList.toggle('active'); update(); }));
-      ['g-seed','g-pattern','g-recs','g-dev','g-trans'].forEach(id => document.getElementById(id).addEventListener('input', update));
-      document.getElementById('g-generate').addEventListener('click', update);
-      document.getElementById('g-save-draft').addEventListener('click', () => save('draft'));
-      document.getElementById('g-publish').addEventListener('click', () => save('published'));
-      document.getElementById('g-copy').addEventListener('click', () => copyToClipboard(JSON.stringify(current(), null, 2), document.getElementById('g-copy')));
-      document.getElementById('g-export').addEventListener('click', () => {
-        const data = JSON.stringify(current(), null, 2);
-        const url = URL.createObjectURL(new Blob([data],{type:'application/json'}));
-        const a = document.createElement('a'); a.href=url; a.download='mantra.json'; a.click(); URL.revokeObjectURL(url);
-      });
-      function selected(){ return Array.from(document.querySelectorAll('#g-intents .tag.active')).map(b => b.getAttribute('data-intent')); }
-      function current(){
-        const seed = document.getElementById('g-seed').value;
-        const pattern = document.getElementById('g-pattern').value;
-        const recs = parseInt(document.getElementById('g-recs').value || '108', 10);
-        const incDev = document.getElementById('g-dev').checked;
-        const incTrans = document.getElementById('g-trans').checked;
-        const intents = selected();
-        const base = generateMantra({ seed, pattern, recs, incDev, incTrans, intents });
-        return { ...base, audio: { mp3: '', voiceover_secs: 0 } };
-      }
-      function update(){ const m = current(); const p = document.getElementById('g-preview'); p.innerHTML = `
-        <div class="devanagari">${m.devanagari||''}</div>
-        <div class="translit">${m.transliteration||''}</div>
-        <strong>${m.title}</strong>
-        <div class="small">${m.meaning||''}</div>
-        <div class="muted">${m.usage||''}</div>
-        <div class="row" style="margin-top:6px;">${(m.tags||[]).map(tg => `<span class='chip'>${tg}</span>`).join(' ')}</div>
-        <div class="small" style="margin-top:6px;">Recitations: ${m.recs||''}</div>`; }
-      function save(status){ const m = current(); const baseId = slug(m.title||'mantra'); const id = makeUniqueId(baseId, t); const entry = { ...m, id, status }; t.mantras = t.mantras||[]; t.mantras.unshift(entry); persist(); showToast(status==='published'?'Mantra published':'Mantra saved'); }
-      update(); AppRoot.focus();
+      setupGenUI();
+      AppRoot.focus();
     }
+
     function drawAssigned(host, t) {
       const assignments = t.assignments;
       if (assignments.length === 0) { host.appendChild(el(`<div class="card"><div class="muted">No assignments yet.</div></div>`)); return; }
-      host.appendChild(el(`<div class="card"><h3>Assigned Studies</h3></div>`));
+      host.appendChild(el(`<div class="card"><h3>Assigned Programs</h3></div>`));
       assignments.forEach(a => {
         const prog = t.programs.find(p => p.id === a.programId);
         if (!prog) return;
@@ -2142,9 +2031,6 @@
     function renderPostures() {
       AppRoot.innerHTML = `
         <section class="grid" aria-label="Postures">
-          <div class="row" style="margin-bottom:8px;">
-            <a class="btn ghost" href="#/explore" aria-label="Back to Explore">← Back to Explore</a>
-          </div>
           <div class="posture-filters" role="search">
             <div class="row">
               <input id="p-search" class="input" placeholder="Search English or Sanskrit" aria-label="Search postures" />
