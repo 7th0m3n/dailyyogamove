@@ -4,6 +4,7 @@ const routes = {
   "#/teacher": () => import("./features/teacher.js"),
   "#/strengthasana": () => import("./features/strengthasana.js"),
   "#/pranayama": () => import("./features/pranayama.js"),
+  "#/breathpacer": () => import("./features/pranayama.js"),
   "#/postures": () => import("./features/postures.js"),
   "#/mantra-generator": () => import("./features/mantra-generator.js"),
   "#/mantras": () => import("./features/traditional-mantras.js"),
