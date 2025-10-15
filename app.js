@@ -1,5 +1,7 @@
 // app.js
 const routes = {
+  "#/about": () => import("./features/about.js"),
+  "#/teacher": () => import("./features/teacher.js"),
   "#/strengthasana": () => import("./features/strengthasana.js"),
   "#/pranayama": () => import("./features/pranayama.js"),
   "#/postures": () => import("./features/postures.js"),
