@@ -86,7 +86,23 @@ export function mount(host) {
     ABORT = ctl;
     fetch('./assets/poses.json', { signal: ctl.signal })
       .then(r => r.ok ? r.json() : [])
-      .then(data => { poses = Array.isArray(data) && data.length ? data : DEFAULT_POSES; draw(); })
+      .then(data => {
+        if (Array.isArray(data) && data.length) { poses = data; draw(); return; }
+        // Attempt extraction from inline disabled script (legacy POSES)
+        try {
+          const scr = document.querySelector('script[type="text/plain"][data-disabled="true"]');
+          if (scr) {
+            const txt = scr.textContent || '';
+            const m = txt.match(/const\s+POSES\s*=\s*\[([\s\S]*?)\];/);
+            if (m && m[1]) {
+              const jsonText = '[' + m[1] + ']';
+              const parsed = JSON.parse(jsonText);
+              if (Array.isArray(parsed) && parsed.length) { poses = parsed; draw(); return; }
+            }
+          }
+        } catch {}
+        poses = DEFAULT_POSES; draw();
+      })
       .catch(() => { poses = DEFAULT_POSES; draw(); });
   }
 
