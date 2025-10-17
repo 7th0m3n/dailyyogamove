@@ -1,4 +1,16 @@
 let ABORT = null;
+const DEFAULT_POSES = [
+  { english:"Sun Salutation A", sanskrit:"सूर्य नमस्कार A", transliteration:"Sūrya Namaskāra A", level:"Beginner", category:"Transition", tags:["vinyasa","warmup"] },
+  { english:"Extended Triangle Pose", sanskrit:"उत्त्थित त्रिकोणासन", transliteration:"Utthita Trikoṇāsana", level:"Beginner", category:"Standing", tags:["lateral"] },
+  { english:"Revolved Triangle Pose", sanskrit:"परिवृत्त त्रिकोणासन", transliteration:"Parivṛtta Trikoṇāsana", level:"Intermediate", category:"Standing", tags:["twist"] },
+  { english:"Chair Pose", sanskrit:"उत्कटासन", transliteration:"Utkatāsana", level:"Beginner", category:"Standing", tags:["legs"] },
+  { english:"Warrior II", sanskrit:"वीरभद्रासन B", transliteration:"Vīrabhadrāsana B", level:"Beginner", category:"Standing", tags:["legs"] },
+  { english:"Seated Forward Fold A", sanskrit:"पश्चिमोत्तानासन A", transliteration:"Paścimottānāsana A", level:"Beginner", category:"Forward Bend", tags:["hamstrings"] },
+  { english:"Boat Pose", sanskrit:"नावासन", transliteration:"Nāvāsana", level:"Beginner", category:"Core", tags:["core"] },
+  { english:"Locust Pose", sanskrit:"शलभासन", transliteration:"Śalabhāsana", level:"Beginner", category:"Backbend", tags:["back"] },
+  { english:"Camel Pose", sanskrit:"उष्ट्रासन", transliteration:"Uṣṭrāsana", level:"Beginner", category:"Backbend", tags:["chest","hip"] },
+  { english:"Corpse Pose", sanskrit:"शवासन", transliteration:"Śavāsana", level:"Beginner", category:"Closing", tags:["relaxation"] }
+];
 
 export function mount(host) {
   host.innerHTML = `
@@ -73,9 +85,9 @@ export function mount(host) {
     const ctl = new AbortController();
     ABORT = ctl;
     fetch('./assets/poses.json', { signal: ctl.signal })
-      .then(r => r.json())
-      .then(data => { poses = Array.isArray(data)? data : []; draw(); })
-      .catch(() => { poses = []; draw(); });
+      .then(r => r.ok ? r.json() : [])
+      .then(data => { poses = Array.isArray(data) && data.length ? data : DEFAULT_POSES; draw(); })
+      .catch(() => { poses = DEFAULT_POSES; draw(); });
   }
 
   search.addEventListener('input', draw);
