@@ -54,6 +54,11 @@ h6 { font-weight: 600; font-size: 14px; margin: 0; }
 .scrolled .nav::after { opacity: 1; }
 
 .benefits-intro { padding: 20px 0 8px; }
+.feature-cards { padding: 10px 0 8px; }
+.features-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 740px) { .features-grid { grid-template-columns: 1fr 1fr 1fr; } }
+.feature-card { padding: 14px; }
+.feature-card .icon { width: 28px; height: 28px; display: block; }
 
 /* Social Proof */
 .social-proof { padding: 24px 0 8px; }
