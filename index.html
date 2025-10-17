@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
     :root {
       /* Colors */
@@ -245,7 +246,8 @@
   <!-- Toast -->
   <div id="toast" aria-live="polite" style="position:fixed; left:50%; bottom:18px; transform:translate(-50%,8px); background:#0f1835; border:1px solid #2b3a72; color:#d6e6ff; padding:8px 12px; border-radius:10px; box-shadow:0 8px 20px rgba(0,0,0,0.35); opacity:0; transition:opacity 180ms ease, transform 180ms ease; z-index:50;"></div>
 
-  <script>
+  <script type="module" src="./app.js"></script>
+  <script type="text/plain" data-disabled="true">
     // Store and App State Utilities
     const STORAGE_KEY = 'dym:store:v1';
     const SAVE_DEBOUNCE_MS = 300;
@@ -701,7 +703,7 @@
       AppRoot.innerHTML = `
         <section class="hero" aria-labelledby="hero-title">
           <h1 id="hero-title">Practice. Sequence. Teach.</h1>
-          <p>Mobile-first yoga teaching and student portal with breath pacing.</p>
+          <p class="subhead">Build a daily yoga habit. Track progress. Join guided sessions.</p>
           <div class="intro-block">
             <div>DailyYogaMove is a white-label platform connecting yoga teachers and students for seamless remote practice.</div>
             <div>It serves as a living library of postures, mantras, and breathwork — a digital ashram for modern seekers.</div>
