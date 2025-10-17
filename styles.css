@@ -1,3 +1,18 @@
 .subhead { margin: 6px 0 14px; color: var(--text-muted); font-size: clamp(16px, 2.6vw, 18px); line-height: 1.35; }
 @media (max-width: 420px) { .subhead { line-height: 1.4; } }
 
+/* Full-bleed hero */
+.hero { position: relative; isolation: isolate; min-height: 52vh; display: grid; place-items: center; text-align: center; }
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -2; background: #0c1530 url('./assets/hero.jpg') center/cover no-repeat;
+}
+.hero::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(10,15,29,0.65), rgba(10,15,29,0.55));
+}
+.hero-inner { padding: 56px 16px; max-width: 1000px; }
+.hero h1 { color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.35); }
+.hero .subhead { color: #e8eeff; }
+.hero .btn { box-shadow: 0 10px 28px rgba(0,0,0,0.35); }
+
+.benefits-intro { padding: 20px 0 8px; }
+
