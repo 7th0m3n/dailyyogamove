@@ -33,7 +33,7 @@ h6 { font-weight: 600; font-size: 14px; margin: 0; }
 /* Full-bleed hero */
 .hero { position: relative; isolation: isolate; min-height: 52vh; display: grid; place-items: center; text-align: center; }
 .hero::before {
-  content: ""; position: absolute; inset: 0; z-index: -2; background: #0c1530 url('./assets/hero.jpg') center/cover no-repeat;
+  content: ""; position: absolute; inset: 0; z-index: -2; background: #0c1530 url('./assets/dailyogamove-hero.png') center/cover no-repeat;
 }
 .hero::after {
   content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(10,15,29,0.65), rgba(10,15,29,0.55));
