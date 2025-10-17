@@ -13,6 +13,9 @@
 .hero h1 { color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.35); }
 .hero .subhead { color: #e8eeff; }
 .hero .btn { box-shadow: 0 10px 28px rgba(0,0,0,0.35); }
+.btn-primary { background: var(--brand); color: #0b1020; }
+.btn-secondary { background: #25325d; color: var(--text); border: 1px solid #2b3a72; }
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
 
 .benefits-intro { padding: 20px 0 8px; }
 
