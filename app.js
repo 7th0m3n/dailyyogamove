@@ -10,6 +10,8 @@ const routes = {
   "#/mantras": () => import("./features/traditional-mantras.js"),
   "#/philosophy": () => import("./features/philosophy.js"),
   "#/assigned-asana": () => import("./features/assigned.js"),
+  "#/teacher-network": () => import("./features/teacher-network.js"),
+  "#/community": () => import("./features/community.js"),
   "#/explore": () => import("./features/explore.js"),
 };
 
