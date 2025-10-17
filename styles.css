@@ -27,6 +27,8 @@ h6 { font-weight: 600; font-size: 14px; margin: 0; }
 .caption { font-size: 12px; color: var(--muted); }
 .subhead { margin: 6px 0 14px; color: var(--text-muted); font-size: clamp(16px, 2.6vw, 18px); line-height: 1.35; }
 @media (max-width: 420px) { .subhead { line-height: 1.4; } }
+/* Comfortable paragraph measure */
+.container p { max-width: 65ch; }
 
 /* Full-bleed hero */
 .hero { position: relative; isolation: isolate; min-height: 52vh; display: grid; place-items: center; text-align: center; }
@@ -100,4 +102,14 @@ h6 { font-weight: 600; font-size: 14px; margin: 0; }
   .hero [role="group"] { flex-direction: column; gap: 10px; }
   .hero [role="group"] .btn { width: 100%; max-width: 320px; }
 }
+
+/* Spacing utilities (px scale: 4, 8, 12, 16, 24, 32, 48, 64) */
+.mt-4{margin-top:4px}.mb-4{margin-bottom:4px}.pt-4{padding-top:4px}.pb-4{padding-bottom:4px}.py-4{padding-top:4px;padding-bottom:4px}.my-4{margin-top:4px;margin-bottom:4px}
+.mt-8{margin-top:8px}.mb-8{margin-bottom:8px}.pt-8{padding-top:8px}.pb-8{padding-bottom:8px}.py-8{padding-top:8px;padding-bottom:8px}.my-8{margin-top:8px;margin-bottom:8px}
+.mt-12{margin-top:12px}.mb-12{margin-bottom:12px}.pt-12{padding-top:12px}.pb-12{padding-bottom:12px}.py-12{padding-top:12px;padding-bottom:12px}.my-12{margin-top:12px;margin-bottom:12px}
+.mt-16{margin-top:16px}.mb-16{margin-bottom:16px}.pt-16{padding-top:16px}.pb-16{padding-bottom:16px}.py-16{padding-top:16px;padding-bottom:16px}.my-16{margin-top:16px;margin-bottom:16px}
+.mt-24{margin-top:24px}.mb-24{margin-bottom:24px}.pt-24{padding-top:24px}.pb-24{padding-bottom:24px}.py-24{padding-top:24px;padding-bottom:24px}.my-24{margin-top:24px;margin-bottom:24px}
+.mt-32{margin-top:32px}.mb-32{margin-bottom:32px}.pt-32{padding-top:32px}.pb-32{padding-bottom:32px}.py-32{padding-top:32px;padding-bottom:32px}.my-32{margin-top:32px;margin-bottom:32px}
+.mt-48{margin-top:48px}.mb-48{margin-bottom:48px}.pt-48{padding-top:48px}.pb-48{padding-bottom:48px}.py-48{padding-top:48px;padding-bottom:48px}.my-48{margin-top:48px;margin-bottom:48px}
+.mt-64{margin-top:64px}.mb-64{margin-bottom:64px}.pt-64{padding-top:64px}.pb-64{padding-bottom:64px}.py-64{padding-top:64px;padding-bottom:64px}.my-64{margin-top:64px;margin-bottom:64px}
 
