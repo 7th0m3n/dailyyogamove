@@ -14,6 +14,9 @@
 
 /* Base type */
 body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color: var(--text); }
+h1, h2, h3, h4, h5, h6 { word-break: normal; overflow-wrap: anywhere; }
+img, video { max-width: 100%; height: auto; }
+html, body { overflow-x: hidden; }
 h1 { font-family: "Playfair Display", Georgia, serif; font-size: clamp(28px, 6vw, 48px); line-height: 1.2; margin: 0; }
 h2 { font-family: "Playfair Display", Georgia, serif; font-size: clamp(24px, 4.5vw, 32px); line-height: 1.25; margin: 0; }
 h3 { font-family: "Playfair Display", Georgia, serif; font-size: 20px; line-height: 1.3; margin: 0; }
@@ -37,6 +40,7 @@ h6 { font-weight: 600; font-size: 14px; margin: 0; }
 .hero h1 { color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.35); }
 .hero .subhead { color: #e8eeff; }
 .hero .btn { box-shadow: 0 10px 28px rgba(0,0,0,0.35); }
+.btn { min-height: 44px; padding: 10px 14px; }
 .btn-primary { background: var(--brand); color: #0b1020; }
 .btn-secondary { background: #25325d; color: var(--text); border: 1px solid #2b3a72; }
 .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
@@ -55,4 +59,19 @@ h6 { font-weight: 600; font-size: 14px; margin: 0; }
 .testimonial-card { background: linear-gradient(180deg, #0e1730, #121f44); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 14px; box-shadow: var(--shadow-1); }
 .partner-logos { display: flex; gap: 20px; justify-content: center; align-items: center; opacity: 0.75; filter: grayscale(1) contrast(0.85); margin-top: 16px; }
 .partner-logos img { height: 28px; }
+
+/* Breakpoints */
+@media (max-width: 1024px) {
+  .container { padding: 20px 14px; }
+}
+@media (max-width: 768px) {
+  .grid.cols-2 { grid-template-columns: 1fr; }
+  .hero-inner { padding: 48px 14px; }
+  .partner-logos { flex-wrap: wrap; gap: 14px; }
+}
+@media (max-width: 640px) {
+  .hero h1 { font-size: clamp(28px, 8vw, 40px); }
+  .hero [role="group"] { flex-direction: column; gap: 10px; }
+  .hero [role="group"] .btn { width: 100%; max-width: 320px; }
+}
 
