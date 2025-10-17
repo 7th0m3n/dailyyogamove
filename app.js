@@ -63,4 +63,10 @@ async function navigate() {
 window.addEventListener("hashchange", navigate);
 navigate();
 
+// Add subtle header shadow on scroll
+window.addEventListener('scroll', () => {
+  const y = window.scrollY || document.documentElement.scrollTop;
+  document.documentElement.classList.toggle('scrolled', y > 2);
+});
+
 
