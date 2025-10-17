@@ -16,6 +16,18 @@ const routes = {
 let active = null;
 let mod = null;
 const outlet = document.getElementById("app");
+const toastEl = document.getElementById('toast');
+
+export function showToast(message, type = 'success') {
+  if (!toastEl) return;
+  toastEl.textContent = message;
+  toastEl.className = `toast toast--${type}`;
+  toastEl.setAttribute('aria-hidden','false');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => {
+    toastEl.setAttribute('aria-hidden','true');
+  }, 2200);
+}
 
 function normalizeHash(h){
   if (!h || h === "#" || h === "#/") return "#/explore";
@@ -29,6 +41,19 @@ async function navigate() {
     if (active && mod?.unmount) { mod.unmount(); active = null; }
     mod = await loader();
     active = mod.mount(outlet, { hash });
+    // Wire demo CTA loading states (if present on page)
+    setTimeout(() => {
+      document.querySelectorAll('.btn[aria-label="Join a Class"], .btn[aria-label="Register as Instructor"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const b = e.currentTarget;
+          b.setAttribute('aria-busy','true');
+          setTimeout(() => {
+            b.removeAttribute('aria-busy');
+            showToast('Success! You are set.', 'success');
+          }, 900);
+        }, { once: true });
+      });
+    }, 0);
   } catch (e) {
     console.error("Route load failed:", hash, e);
     location.hash = "#/explore";
