@@ -53,6 +53,11 @@ h6 { font-weight: 600; font-size: 14px; margin: 0; }
 .nav::after { content:""; position: absolute; inset: auto 0 -14px 0; height: 14px; pointer-events:none; background: linear-gradient(180deg, rgba(0,0,0,0.18), transparent); opacity: 0; transition: opacity 180ms ease; }
 .scrolled .nav::after { opacity: 1; }
 
+/* Footer links */
+.site-footer a { color: var(--text); opacity: 0.9; text-decoration: none; border-radius: 6px; padding: 2px 4px; }
+.site-footer a:hover { opacity: 1; background: rgba(255,255,255,0.06); }
+.site-footer a:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); background: rgba(255,255,255,0.08); }
+
 .benefits-intro { padding: 20px 0 8px; }
 .feature-cards { padding: 10px 0 8px; }
 .features-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
