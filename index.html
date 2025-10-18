@@ -399,6 +399,30 @@
   <div id="toast" class="toast" aria-live="polite" role="status"></div>
 
   <script type="module" src="./app.js"></script>
+  <script>
+    // Mobile menu toggle
+    (function(){
+      const nav = document.getElementById('site-nav');
+      const toggle = document.getElementById('menuToggle');
+      const primary = document.getElementById('primaryNav');
+      if (!nav || !toggle || !primary) return;
+      const setOpen = (open) => {
+        nav.classList.toggle('is-open', open);
+        toggle.setAttribute('aria-expanded', String(open));
+      };
+      toggle.addEventListener('click', () => {
+        const open = !nav.classList.contains('is-open');
+        setOpen(open);
+      });
+      // Close on navigation
+      primary.addEventListener('click', (e) => {
+        const t = e.target;
+        if (t && t.closest('a')) setOpen(false);
+      });
+      // Close on escape
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+    })();
+  </script>
   <script type="text/plain" data-disabled="true">
     // Store and App State Utilities
     const STORAGE_KEY = 'dym:store:v1';
