@@ -20,6 +20,37 @@ export function mount(host) {
         </div>
       </div>
     </section>
+
+    <section class="container" aria-label="How it works (compact)" style="margin-top:20px;">
+      <div class="row" style="justify-content:space-between; align-items:flex-end; gap:8px;">
+        <h2 style="margin:0;">How it works</h2>
+        <a class="small" href="#/how-it-works" aria-label="Full guide">Full guide →</a>
+      </div>
+      <div class="grid cols-2" style="margin-top:10px;">
+        <div class="card">
+          <h3>For Students</h3>
+          <div class="list" style="margin-top:8px;">
+            <div class="seq-item"><div><strong>1. Find your teacher</strong><div class="small">Browse Teacher Network or Features by style.</div></div></div>
+            <div class="seq-item"><div><strong>2. Join a class</strong><div class="small">Watch live or on‑demand. Simple checkout placeholder.</div></div></div>
+          </div>
+          <div class="row" style="gap:8px; margin-top:10px;">
+            <a class="btn ghost sm" href="#/explore">Explore Classes</a>
+            <a class="btn ghost sm" href="#/community">Visit Community</a>
+          </div>
+        </div>
+        <div class="card">
+          <h3>For Teachers</h3>
+          <div class="list" style="margin-top:8px;">
+            <div class="seq-item"><div><strong>1. Register</strong><div class="small">Create your profile.</div></div></div>
+            <div class="seq-item"><div><strong>2. Publish classes</strong><div class="small">Add live or video classes.</div></div></div>
+          </div>
+          <div class="row" style="gap:8px; margin-top:10px;">
+            <a class="btn ghost sm" href="#/teacher">Register as Teacher</a>
+            <a class="btn ghost sm" href="#/teacher-network">See Teacher Network</a>
+          </div>
+        </div>
+      </div>
+    </section>
   `;
   return {};
 }
