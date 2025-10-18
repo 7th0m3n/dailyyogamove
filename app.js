@@ -13,6 +13,7 @@ const routes = {
   "#/teacher-network": () => import("./features/teacher-network.js"),
   "#/community": () => import("./features/community.js"),
   "#/explore": () => import("./features/explore.js"),
+  "#/how-it-works": () => import("./features/how-it-works.js"),
 };
 
 let active = null;
