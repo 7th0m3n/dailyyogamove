@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>DailyYogaMove</title>
   <meta name="description" content="DailyYogaMove – Teachers, students, sequences, and breath pacing." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -53,7 +53,7 @@
     }
     * { box-sizing: border-box; }
     html, body { height: 100%; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     body {
       margin: 0;
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
@@ -76,8 +76,8 @@
       padding: 24px 16px 96px;
     }
     header[role="banner"] {
-      position: sticky; top: 0; z-index: 10;
-      background: linear-gradient(180deg, rgba(15,25,51,0.92), rgba(15,25,51,0.55) 60%, transparent);
+      position: sticky; top: 0; z-index: 50; contain: layout paint; /* improve mobile scroll perf */
+      background: linear-gradient(180deg, rgba(15,25,51,0.96), rgba(15,25,51,0.86));
       backdrop-filter: blur(10px);
     }
     .nav {
@@ -94,6 +94,54 @@
       box-shadow: var(--shadow-2);
     }
     .nav-actions { display: flex; gap: 8px; }
+
+    /* Mobile navigation */
+    .menu-toggle {
+      display: none;
+      align-items: center; justify-content: center;
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      border: 1px solid #2b3a72;
+      background: #0f1835;
+      color: var(--text);
+      box-shadow: var(--shadow-2);
+      transition: background var(--transition), box-shadow var(--transition), transform var(--transition), opacity var(--transition);
+    }
+    .menu-toggle:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+
+    @media (max-width: 768px) {
+      .menu-toggle { display: inline-flex; }
+      .nav { flex-wrap: wrap; }
+      .nav-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+        margin-top: 8px;
+        border-top: 1px solid #27356b;
+        padding-top: 8px;
+        max-height: 0;
+        opacity: 0;
+        visibility: hidden;
+        overflow: hidden;
+        transition: max-height var(--transition), opacity var(--transition), visibility var(--transition);
+      }
+      .nav.is-open .nav-actions {
+        max-height: 500px;
+        opacity: 1;
+        visibility: visible;
+      }
+      .nav-actions .btn { width: 100%; }
+    }
+
+    @media (min-width: 768px) {
+      .menu-toggle { display: none; }
+      .nav-actions { display: flex; max-height: none; opacity: 1; visibility: visible; overflow: visible; }
+    }
+    @media (max-width: 640px) {
+      .nav { flex-wrap: wrap; }
+      .nav-actions { flex-wrap: wrap; width: 100%; justify-content: center; }
+      .nav-actions .btn { flex: 1 1 140px; }
+    }
 
     .btn {
       background: var(--brand);
@@ -202,7 +250,7 @@
 
     /* Postures */
     .posture-filters { position: sticky; top: 64px; z-index: 5; background: linear-gradient(180deg, rgba(15,25,51,0.92), rgba(15,25,51,0.6)); padding: 8px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(8px); }
-    .posture-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+    .posture-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
     .posture-card { background: linear-gradient(180deg, #0e1730, #13214a); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; overflow: hidden; transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition); }
     .posture-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); border-color: rgba(110,168,254,0.35); }
     .posture-media { height: 140px; background: radial-gradient(circle at 35% 35%, rgba(110,168,254,0.25), transparent 60%), linear-gradient(160deg, #0c1733, #15244d); display: grid; place-items: center; color: #9fc9ff; font-size: 32px; }
@@ -224,12 +272,18 @@
 </head>
 <body>
   <header role="banner" aria-label="Top Navigation">
-    <div class="nav container">
+    <div class="nav container" id="site-nav">
       <a class="brand" href="#/" aria-label="DailyYogaMove Home">
         <span class="brand-badge" aria-hidden="true"></span>
         <span>DailyYogaMove</span>
       </a>
-      <nav class="nav-actions" aria-label="Primary">
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav">
+        <!-- Hamburger icon -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <nav class="nav-actions" id="primaryNav" aria-label="Primary">
         <a class="btn ghost nav-link" href="#/explore" role="button" aria-label="Features">Features</a>
         <a class="btn ghost nav-link" href="#/teacher-network" role="button" aria-label="Teacher Network">Teacher Network</a>
         <a class="btn ghost nav-link" href="#/community" role="button" aria-label="Community">Community</a>
@@ -244,7 +298,7 @@
       <h1 id="hero-title">DailyYogaMove</h1>
       <p class="subhead">Build a daily yoga habit. Track progress. Join guided sessions.</p>
       <p class="caption" style="margin-top:6px; line-height:1.5; max-width:720px; margin-left:auto; margin-right:auto;">Simple tools to practice, progress, and show up—every day.</p>
-      <div class="row" role="group" aria-label="Primary Calls To Action" style="justify-content:center; gap:10px;">
+      <div class="row" role="group" aria-label="Primary Calls To Action" style="justify-content:center; gap:10px; flex-wrap:wrap;">
         <a class="btn btn-primary" href="#/join" role="button" aria-label="Join a Class">Join a Class</a>
         <a class="btn btn-secondary" href="#/teacher" role="button" aria-label="Register as Instructor">Register as Instructor</a>
       </div>
@@ -290,7 +344,7 @@
 
   <section class="social-proof py-24" aria-label="Social Proof">
     <div class="container">
-      <div class="stats row" role="group" aria-label="Platform Stats">
+      <div class="stats row" role="group" aria-label="Platform Stats" style="flex-wrap:wrap;">
         <div class="chip">1,200+ practices logged</div>
         <div class="chip">180-day streaks</div>
         <div class="chip">Trusted by modern studios</div>
@@ -310,9 +364,9 @@
         </article>
       </div>
       <div class="partner-logos" aria-label="Partner Logos">
-        <img src="./assets/logos/logo1.svg" alt="Partner logo" />
-        <img src="./assets/logos/logo2.svg" alt="Partner logo" />
-        <img src="./assets/logos/logo3.svg" alt="Partner logo" />
+        <img src="./assets/logos/logo1.svg" alt="Partner logo" style="max-width:100%; height:auto;" />
+        <img src="./assets/logos/logo2.svg" alt="Partner logo" style="max-width:100%; height:auto;" />
+        <img src="./assets/logos/logo3.svg" alt="Partner logo" style="max-width:100%; height:auto;" />
       </div>
     </div>
   </section>
@@ -345,6 +399,30 @@
   <div id="toast" class="toast" aria-live="polite" role="status"></div>
 
   <script type="module" src="./app.js"></script>
+  <script>
+    // Mobile menu toggle
+    (function(){
+      const nav = document.getElementById('site-nav');
+      const toggle = document.getElementById('menuToggle');
+      const primary = document.getElementById('primaryNav');
+      if (!nav || !toggle || !primary) return;
+      const setOpen = (open) => {
+        nav.classList.toggle('is-open', open);
+        toggle.setAttribute('aria-expanded', String(open));
+      };
+      toggle.addEventListener('click', () => {
+        const open = !nav.classList.contains('is-open');
+        setOpen(open);
+      });
+      // Close on navigation
+      primary.addEventListener('click', (e) => {
+        const t = e.target;
+        if (t && t.closest('a')) setOpen(false);
+      });
+      // Close on escape
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+    })();
+  </script>
   <script type="text/plain" data-disabled="true">
     // Store and App State Utilities
     const STORAGE_KEY = 'dym:store:v1';
