@@ -71,4 +71,44 @@ window.addEventListener('scroll', () => {
   document.documentElement.classList.toggle('scrolled', y > 2);
 });
 
+// Mobile nav: hamburger toggle for primary menu
+function initNavToggle() {
+  const headerNav = document.querySelector('header .nav');
+  const toggle = document.querySelector('.nav-toggle');
+  const menu = document.getElementById('primary-menu');
+  if (!headerNav || !toggle || !menu) return;
+
+  function setOpen(isOpen) {
+    headerNav.setAttribute('data-menu-open', String(isOpen));
+    toggle.setAttribute('aria-expanded', String(isOpen));
+  }
+
+  // Close on route change
+  window.addEventListener('hashchange', () => setOpen(false));
+
+  // Toggle on click
+  toggle.addEventListener('click', () => {
+    const isOpen = headerNav.getAttribute('data-menu-open') === 'true';
+    setOpen(!isOpen);
+  });
+
+  // Close when clicking outside the menu on mobile
+  document.addEventListener('click', (e) => {
+    const isOpen = headerNav.getAttribute('data-menu-open') === 'true';
+    if (!isOpen) return;
+    const target = e.target;
+    if (!headerNav.contains(target)) {
+      setOpen(false);
+    }
+  });
+
+  // Close when pressing Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
+  });
+}
+
+// Initialize after first paint
+window.addEventListener('DOMContentLoaded', initNavToggle);
+
 
