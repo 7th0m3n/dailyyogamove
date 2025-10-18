@@ -76,8 +76,8 @@
       padding: 24px 16px 96px;
     }
     header[role="banner"] {
-      position: sticky; top: 0; z-index: 10; contain: layout paint; /* improve mobile scroll perf */
-      background: linear-gradient(180deg, rgba(15,25,51,0.92), rgba(15,25,51,0.55) 60%, transparent);
+      position: sticky; top: 0; z-index: 50; contain: layout paint; /* improve mobile scroll perf */
+      background: linear-gradient(180deg, rgba(15,25,51,0.96), rgba(15,25,51,0.86));
       backdrop-filter: blur(10px);
     }
     .nav {
@@ -94,6 +94,49 @@
       box-shadow: var(--shadow-2);
     }
     .nav-actions { display: flex; gap: 8px; }
+
+    /* Mobile navigation */
+    .menu-toggle {
+      display: none;
+      align-items: center; justify-content: center;
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      border: 1px solid #2b3a72;
+      background: #0f1835;
+      color: var(--text);
+      box-shadow: var(--shadow-2);
+      transition: background var(--transition), box-shadow var(--transition), transform var(--transition), opacity var(--transition);
+    }
+    .menu-toggle:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+
+    @media (max-width: 768px) {
+      .menu-toggle { display: inline-flex; }
+      .nav { flex-wrap: wrap; }
+      .nav-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+        margin-top: 8px;
+        border-top: 1px solid #27356b;
+        padding-top: 8px;
+        max-height: 0;
+        opacity: 0;
+        visibility: hidden;
+        overflow: hidden;
+        transition: max-height var(--transition), opacity var(--transition), visibility var(--transition);
+      }
+      .nav.is-open .nav-actions {
+        max-height: 500px;
+        opacity: 1;
+        visibility: visible;
+      }
+      .nav-actions .btn { width: 100%; }
+    }
+
+    @media (min-width: 768px) {
+      .menu-toggle { display: none; }
+      .nav-actions { display: flex; max-height: none; opacity: 1; visibility: visible; overflow: visible; }
+    }
     @media (max-width: 640px) {
       .nav { flex-wrap: wrap; }
       .nav-actions { flex-wrap: wrap; width: 100%; justify-content: center; }
@@ -229,12 +272,18 @@
 </head>
 <body>
   <header role="banner" aria-label="Top Navigation">
-    <div class="nav container">
+    <div class="nav container" id="site-nav">
       <a class="brand" href="#/" aria-label="DailyYogaMove Home">
         <span class="brand-badge" aria-hidden="true"></span>
         <span>DailyYogaMove</span>
       </a>
-      <nav class="nav-actions" aria-label="Primary">
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav">
+        <!-- Hamburger icon -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <nav class="nav-actions" id="primaryNav" aria-label="Primary">
         <a class="btn ghost nav-link" href="#/explore" role="button" aria-label="Features">Features</a>
         <a class="btn ghost nav-link" href="#/teacher-network" role="button" aria-label="Teacher Network">Teacher Network</a>
         <a class="btn ghost nav-link" href="#/community" role="button" aria-label="Community">Community</a>
